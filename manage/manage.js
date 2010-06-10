@@ -45,6 +45,7 @@ var Manager = {
                         }
                         element.destroy();
                         styleStorage.removeItem(key);
+                        safari.self.tab.dispatchMessage('reloadStyles');
                     }
                 }
             });
@@ -111,6 +112,7 @@ var Manager = {
                     data.name = key;
                 var item = Manager.createItem(key, data);
                 item.getChildren('a')[0].fireEvent('click');
+                safari.self.tab.dispatchMessage('reloadStyles');
             }
         });
     },
