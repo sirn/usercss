@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User CSS</title>
+    <meta charset="utf-8" />
+    <link rel='stylesheet' href='manage.css' />
+  </head>
+  <body>
+    <header>
+      <h1>User CSS Manager</h1>
+    </header>
+    <nav>
+      <ul id="list"></ul>
+      <a id="new" href="#new">New User CSS</a>
+    </nav>
+    <section>
+      <h1 id="title">New User CSS</h1>
+      <form id="form">
+        <fieldset>
+          <p>
+            <label for="name">Name:</label>
+            <input name="name" type="text" />
+          </p>
+          <p>
+            <label for="domains">Domains:</label>
+            <textarea name="domains"></textarea>
+          </p>
+          <p>
+            <label for="styles">Styles:</label>
+            <textarea name="styles"></textarea>
+          </p>
+          <p>
+            <input type="submit" value="Save" />
+          </p>
+        </fieldset>
+      </form>
+    </section>
+    <script src="../share/mootools.js"></script>
+    <script src="../share/storage.js"></script>
+    <script src="manage.js"></script>
+  </body>
+</html>

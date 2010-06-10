@@ -1,0 +1,5 @@
+# Nasty system files
+.DS_Store
+Thumbs.db
+
+# Application-specific
