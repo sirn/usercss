@@ -4,14 +4,14 @@ var styleStorage = {
         var jsonString = localStorage.getItem(key);
         if (jsonString) {
             var data = JSON.parse(jsonString);
-            data.key = key;
+            if (!data.name)
+                data.name = key;
             return data;
         }
         return;
     },
     
     setItem: function(key, data) {
-        delete data.key;
         var jsonString = JSON.stringify(data);
         localStorage.setItem(key, jsonString);
     },
@@ -29,7 +29,7 @@ var styleStorage = {
             var key = localStorage.key(i),
                 data = styleStorage.getItem(key);
             data.key = key;
-            fn(data);
+            fn(key, data);
         };
     },
     

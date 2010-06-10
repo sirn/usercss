@@ -1,7 +1,7 @@
 function reloadStyles() {
     safari.extension.removeContentStyleSheets();
-    styleStorage.each(function(data){
-        console.log('Applying styles for', data.domains.join(', '));
+    styleStorage.each(function(key, data){
+        console.log('['+key+']', 'Domains:', data.domains.join(', '));
         safari.extension.addContentStyleSheet(data.styles, data.domains);
     });
 }
