@@ -14,14 +14,12 @@ var styleStorage = {
     setItem: function(key, data) {
         var jsonString = JSON.stringify(data);
         localStorage.setItem(key, jsonString);
+        return;
     },
     
-    setField: function(key, field, value) {
-        var item = styleStorage.getItem(key);
-        if (item) {
-            item[field] = value;
-            styleStorage.setItem(key, item);
-        }
+    removeItem: function(key) {
+        localStorage.removeItem(key);
+        return;
     },
     
     each: function(fn) {

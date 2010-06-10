@@ -11,7 +11,7 @@
     </header>
     <nav>
       <ul id="list"></ul>
-      <a id="new" href="#new">New User CSS</a>
+      <a id="new" class="selector" href="#new">New User CSS</a>
     </nav>
     <section>
       <h1 id="title">New User CSS</h1>
@@ -24,12 +24,20 @@
           <p>
             <label for="domains">Domains:</label>
             <textarea name="domains"></textarea>
+            <span class="description">
+              One rule per line. Widecard matches all.
+              <strong>Example:</strong> http://*.apple.com/*
+            </span>
           </p>
           <p>
             <label for="styles">Styles:</label>
             <textarea name="styles"></textarea>
+            <span class="description">
+              To override page style, put <strong>!important</strong>
+              at the end of each style.
+            </span>
           </p>
-          <p>
+          <p class="submit">
             <input name="save" type="submit" value="Save" />
           </p>
         </fieldset>

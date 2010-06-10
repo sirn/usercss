@@ -1,7 +1,8 @@
 var Manager = {
     
     $n: function(key) { return 'item-'+key; },
-    $: function(key) { return $(Manager.$n(key)); },
+    $p: function(key) { return $(Manager.$n(key)); },
+    $a: function(key) { return Manager.$p(key).getChildren('a')[0]; },
     
     setTitle: function(title){
         $('title').set('text', title);
@@ -9,31 +10,62 @@ var Manager = {
     
     createItem: function(key, data){
         const list = $('list');
-        var item = new Element('li'),
+        var item = new Element('li', {id: Manager.$n(key)}),
             link = new Element('a', {
-                id: Manager.$n(key),
+                'class': 'selector',
                 href: '#'+key,
                 text: data.name,
                 events: {
                     click: function(event){
-                        event.stop();
                         var key = this.hash.substr(1);
                         Manager.markCurrent(this);
                         Manager.bindEditForm(key, styleStorage.getItem(key));
                     }
                 }
+            }),
+            delete_link = new Element('a', {
+                'class': 'delete',
+                href: '#delete'+key,
+                text: '[delete]',
+                events: {
+                    click: function(event){
+                        var key = this.hash.substr(7),
+                            element = Manager.$p(key);
+                        
+                        if (Manager.$a(key).hasClass('current')) {
+                            var prev = element.getPrevious(),
+                                next = element.getNext();
+                            if (next) {
+                                next.getChildren('a')[0].fireEvent('click');
+                            } else if (prev) {
+                                prev.getChildren('a')[0].fireEvent('click');
+                            } else {
+                                $('new').fireEvent('click');
+                            }
+                        }
+                        element.destroy();
+                        styleStorage.removeItem(key);
+                    }
+                }
             });
-        item.grab(link).inject(list);
+        item.grab(link).grab(delete_link).inject(list);
         return item;
     },
     
     markCurrent: function(element){
         $$('.current').each(function(c){
-            c.erase('class');
+            c.removeClass('current');
         });
         if (typeof element === 'string')
-            element = Manager.$(element);
-        element.set('class', 'current');
+            element = Manager.$a(element);
+        element.addClass('current');
+    },
+    
+    constructDataFromForm: function(data, form){
+        data.name = form.name.value;
+        data.domains = form.domains.value.split('\n');
+        data.styles = form.styles.value;
+        return data;
     },
     
     bindForm: function(data, fn){
@@ -53,11 +85,7 @@ var Manager = {
         Manager.bindForm(data, function(event){
             event.stop();
             
-            data = data;
-            data.name = this.name.value;
-            data.domains = this.domains.value.split("\n");
-            data.styles = this.styles.value;
-            
+            data = Manager.constructDataFromForm(data, this);
             styleStorage.setItem(key, data);
             safari.self.tab.dispatchMessage('reloadStyles');
             
@@ -66,7 +94,7 @@ var Manager = {
             if (this.name.value)
                 name = this.name.value;
             Manager.setTitle(name);
-            Manager.$(key).set('text', name);
+            Manager.$a(key).set('text', name);
         });
     },
     
@@ -74,7 +102,16 @@ var Manager = {
         Manager.setTitle('New User CSS');
         Manager.bindForm({'domains':[]}, function(event){
             event.stop();
-            console.log('TODO');
+            
+            var data = Manager.constructDataFromForm({}, this),
+                key = new Date().getTime();
+            if (data.styles && data.domains) {
+                styleStorage.setItem(key, data);
+                if (!data.name)
+                    data.name = key;
+                var item = Manager.createItem(key, data);
+                item.getChildren('a')[0].fireEvent('click');
+            }
         });
     },
     
@@ -85,6 +122,7 @@ var Site = {
     start: function(){
         Site.populateStyles();
         Site.bindEvents();
+        $('new').fireEvent('click');
     },
     
     populateStyles: function(){
@@ -94,12 +132,11 @@ var Site = {
     bindEvents: function(){
         const link = $('new');
         link.addEvent('click', function(event){
-            event.stop();
             Manager.markCurrent(this);
             Manager.bindNewForm();
         });
     },
-
+    
 }
 
 window.addEvent('domready', function(){ Site.start(); });

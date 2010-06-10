@@ -1,9 +1,160 @@
+/* Defaults
+ * ----------------------------------------------------------------------- */
+
+html {
+    background: #f0f0f0;
+}
+
 body {
+    position: absolute;
+    top: 50px; right: 50px; bottom: 50px; left: 50px;
     margin: 0; padding: 0;
+    background: #fff;
+    border: 1px solid #646464;
     font-family: sans-serif;
     font-size: 14px/100%;
 }
 
-a.current {
-    background: #ddd;
+/* Header
+ * ----------------------------------------------------------------------- */
+
+header {
+    display: block;
+    height: 35px;
+}
+
+header h1 {
+    display: block;
+    margin: 0; padding: 10px;
+    border-bottom: 1px solid #646464;
+    background: -webkit-gradient(linear, left top, left bottom, from(#bfbfbf), to(#979797));
+    font-size: 11px;
+    line-height: 14px;
+    color: #000;
+    text-shadow: 0 1px 0 #e0e0e0;
+}
+
+/* Nav
+ * ----------------------------------------------------------------------- */
+
+nav {
+    display: block;
+    position: absolute;
+    top: 35px; right: auto; bottom: 0; left: 0;
+    width: 199px;
+    border-right: 1px solid #aaa;
+    background: #dee4ea;
+}
+
+nav ul {
+    margin: 0; padding: 0;
+    list-style: none;
+}
+
+nav li {
+    margin: 0; padding: 0;
+    position: relative;
+}
+
+nav a.selector {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    color: #000;
+}
+
+nav a.selector.current {
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 1px 0 #333;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5b92d5), to(#1654ab));
+}
+
+nav a.delete {
+    position: absolute;
+    top: 50%; right: 8px; bottom: auto; left: auto;
+    margin: 0; margin-top: -7px;
+    width: 14px;
+    height: 14px;
+    background: url(resources/delete.png) no-repeat;
+    text-indent: -10000em;
+}
+
+nav a.delete:hover {
+    background-image: url(resources/delete-hover.png);
+}
+
+/* Content area
+ * ----------------------------------------------------------------------- */
+
+section {
+    display: block;
+    position: absolute;
+    margin: 0; padding: 0;
+    top: 35px; right: 0; bottom: 0; left: 200px;
+    overflow: auto;
+}
+
+section h1 {
+    margin: 0 0 10px; padding: 10px 15px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#d9d9d9));
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #aaa;
+    text-shadow: 0 1px 0 #fff;
+    font-size: 16px;
+    color: #666;
+}
+
+section fieldset {
+    margin: 15px; padding: 0;
+    border: 0;
+}
+
+section label {
+    float: left;
+    width: 20%;
+    padding: 5px;
+    text-align: right;
+    font-size: 13px;
+    color: #666;
+}
+
+section span.description {
+    display: block;
+    margin-left: 20%;
+    padding: 3px 0 0 10px;
+    font-size: 11px;
+    line-height: 11px;
+    color: #aaa;
+}
+
+section input[type="text"],
+section textarea {
+    font-size: 13px;
+    resize: none;
+}
+
+section textarea {
+    padding: 5px;
+}
+
+section input[name="name"] {
+    width: 35%;
+}
+
+section textarea[name="domains"] {
+    width: 60%;
+    height: 50px;
+}
+
+section textarea[name="styles"] {
+    font-family: monospace;
+    width: 60%;
+    height: 200px;
+}
+
+section p.submit {
+    margin-left: 20%;
+    padding-left: 10px;
 }
