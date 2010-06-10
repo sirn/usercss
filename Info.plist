@@ -47,5 +47,9 @@
 			<string>All</string>
 		</dict>
 	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://code.grid.in.th/update.plist</string>
+	<key>Website</key>
+	<string>http://code.grid.in.th/</string>
 </dict>
 </plist>
