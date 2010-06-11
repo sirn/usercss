@@ -4,6 +4,10 @@ var Manager = {
     $p: function(key) { return $(Manager.$n(key)); },
     $a: function(key) { return Manager.$p(key).getChildren('a')[0]; },
     
+    reloadStyles: function(){
+        safari.self.tab.dispatchMessage('reloadStyles');
+    },
+    
     setTitle: function(title){
         $('title').set('text', title);
     },
@@ -34,18 +38,18 @@ var Manager = {
                         
                         if (Manager.$a(key).hasClass('current')) {
                             var prev = element.getPrevious(),
-                                next = element.getNext();
+                                next = element.getNext(),
+                                target = $('new');
                             if (next) {
-                                next.getChildren('a')[0].fireEvent('click');
+                                target = next.getChildren('a')[0];
                             } else if (prev) {
-                                prev.getChildren('a')[0].fireEvent('click');
-                            } else {
-                                $('new').fireEvent('click');
+                                target = prev.getChildren('a')[0];
                             }
+                            target.fireEvent('click');
                         }
                         element.destroy();
                         styleStorage.removeItem(key);
-                        safari.self.tab.dispatchMessage('reloadStyles');
+                        Manager.reloadStyles();
                     }
                 }
             });
@@ -88,7 +92,7 @@ var Manager = {
             
             data = Manager.constructDataFromForm(data, this);
             styleStorage.setItem(key, data);
-            safari.self.tab.dispatchMessage('reloadStyles');
+            Manager.reloadStyles();
             
             // Always update display
             var name = data.name;
@@ -112,7 +116,7 @@ var Manager = {
                     data.name = key;
                 var item = Manager.createItem(key, data);
                 item.getChildren('a')[0].fireEvent('click');
-                safari.self.tab.dispatchMessage('reloadStyles');
+                Manager.reloadStyles();
             }
         });
     },

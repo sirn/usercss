@@ -45,6 +45,7 @@ nav {
     width: 199px;
     border-right: 1px solid #aaa;
     background: #dee4ea;
+    overflow: auto;
 }
 
 nav ul {
