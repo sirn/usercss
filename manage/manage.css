@@ -20,16 +20,17 @@ body {
 
 header {
     display: block;
-    height: 35px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#bfbfbf), to(#979797));
+    height: 36px;
 }
 
 header h1 {
     display: block;
-    margin: 0; padding: 10px;
+    margin: 0; padding: 10px 10px 10px 42px;
     border-bottom: 1px solid #646464;
-    background: -webkit-gradient(linear, left top, left bottom, from(#bfbfbf), to(#979797));
+    background: url(safari-resource:/ExtensionDefaultIcon32.png) no-repeat 5px 1px;
     font-size: 11px;
-    line-height: 14px;
+    line-height: 15px;
     color: #000;
     text-shadow: 0 1px 0 #e0e0e0;
 }
@@ -40,7 +41,7 @@ header h1 {
 nav {
     display: block;
     position: absolute;
-    top: 35px; right: auto; bottom: 0; left: 0;
+    top: 36px; right: auto; bottom: 0; left: 0;
     width: 199px;
     border-right: 1px solid #aaa;
     background: #dee4ea;
@@ -77,12 +78,12 @@ nav a.delete {
     margin: 0; margin-top: -7px;
     width: 14px;
     height: 14px;
-    background: url(resources/delete.png) no-repeat;
+    background: url(safari-resource:/ExtensionClose.png) no-repeat;
     text-indent: -10000em;
 }
 
 nav a.delete:hover {
-    background-image: url(resources/delete-hover.png);
+    background-image: url(safari-resource:/ExtensionCloseHovered.png);
 }
 
 /* Content area
@@ -92,7 +93,7 @@ section {
     display: block;
     position: absolute;
     margin: 0; padding: 0;
-    top: 35px; right: 0; bottom: 0; left: 200px;
+    top: 36px; right: 0; bottom: 0; left: 200px;
     overflow: auto;
 }
 
