@@ -26,9 +26,8 @@ header {
 
 header h1 {
     display: block;
-    margin: 0; padding: 10px 10px 10px 42px;
+    margin: 0; padding: 10px;
     border-bottom: 1px solid #646464;
-    background: url(safari-resource:/ExtensionDefaultIcon32.png) no-repeat 5px 1px;
     font-size: 11px;
     line-height: 15px;
     color: #000;
