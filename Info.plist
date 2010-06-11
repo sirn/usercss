@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>Chrome</key>
@@ -29,6 +29,17 @@
 		</array>
 		<key>Global Page</key>
 		<string>usercss/globals.html</string>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Identifier</key>
+				<string>manage-user-css</string>
+				<key>Image</key>
+				<string>share/toolbar.png</string>
+				<key>Label</key>
+				<string>User CSS</string>
+			</dict>
+		</array>
 	</dict>
 	<key>Content</key>
 	<dict>
