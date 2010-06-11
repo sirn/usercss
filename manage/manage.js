@@ -16,7 +16,7 @@ var Manager = {
         const list = $('list');
         var item = new Element('li', {id: Manager.$n(key)}),
             link = new Element('a', {
-                'class': 'selector',
+                'class': 'selector' + (data.enabled ? '' : ' disabled'),
                 href: '#'+key,
                 text: data.name,
                 events: {
@@ -68,6 +68,7 @@ var Manager = {
     
     constructDataFromForm: function(data, form){
         data.name = form.name.value;
+        data.enabled = form.enabled.checked;
         data.domains = form.domains.value.split('\n');
         data.styles = form.styles.value;
         return data;
@@ -79,6 +80,7 @@ var Manager = {
         form.name.set('value', data.name);
         form.domains.set('text', data.domains.join('\n'));
         form.styles.set('text', data.styles);
+        form.enabled.set('checked', data.enabled);
         
         form.removeEvents('submit'); // Cleanup
         if (fn)
@@ -95,11 +97,15 @@ var Manager = {
             Manager.reloadStyles();
             
             // Always update display
-            var name = data.name;
+            var name = data.name,
+                element = Manager.$a(key);
             if (this.name.value)
                 name = this.name.value;
             Manager.setTitle(name);
-            Manager.$a(key).set('text', name);
+            element.set('text', name);
+            element.removeClass('disabled');
+            if (!data.enabled)
+                element.addClass('disabled');
         });
     },
     
@@ -117,6 +123,8 @@ var Manager = {
                 var item = Manager.createItem(key, data);
                 item.getChildren('a')[0].fireEvent('click');
                 Manager.reloadStyles();
+                if (!data.enabled)
+                    item.addClass('disabled');
             }
         });
     },

@@ -66,6 +66,10 @@ nav a.selector {
     color: #000;
 }
 
+nav a.selector.disabled {
+    color: #888;
+}
+
 nav a.selector.current {
     color: #fff;
     font-weight: bold;
@@ -139,6 +143,10 @@ section textarea {
 
 section textarea {
     padding: 5px;
+}
+
+section input[type="checkbox"] {
+    margin: 6px 0 0 2px;
 }
 
 section input[name="name"] {

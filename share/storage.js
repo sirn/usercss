@@ -31,4 +31,13 @@ var styleStorage = {
         };
     },
     
+    makeConsistent: function() {
+        styleStorage.each(function(key, data){
+            if (data.enabled == undefined) {
+                data.enabled = true;
+                styleStorage.setItem(key, data);
+            }
+        });
+    },
+    
 }

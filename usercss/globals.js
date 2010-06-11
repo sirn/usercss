@@ -1,9 +1,15 @@
 function reloadStyles() {
     safari.extension.removeContentStyleSheets();
     styleStorage.each(function(key, data){
-        console.log('['+key+']', 'Domains:', data.domains.join(', '));
-        safari.extension.addContentStyleSheet(data.styles, data.domains);
+        if (data.enabled) {
+            console.log(key, 'd:', data.domains.join(', '));
+            safari.extension.addContentStyleSheet(data.styles, data.domains);
+        }
     });
+}
+
+function makeConsistent() {
+    styleStorage.makeConsistent();
 }
 
 function handleCommand(event) {
@@ -26,4 +32,5 @@ function handleMessage(event) {
 
 safari.application.addEventListener('command', handleCommand, false);
 safari.application.addEventListener('message', handleMessage, false);
+makeConsistent();
 reloadStyles();
