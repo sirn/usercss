@@ -13,7 +13,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Context Menu Items</key>
@@ -47,7 +47,7 @@
 		<dict/>
 	</dict>
 	<key>Description</key>
-	<string>Per-domain user stylesheets.</string>
+	<string>Extension that will easily enable you to override stylesheets for any web page for anything.</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>
