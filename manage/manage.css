@@ -145,20 +145,20 @@ section fieldset textarea {
     resize: none;
 }
 
-section textarea {
+section fieldset textarea {
     padding: 5px;
 }
 
-section input[name="name"] {
+section fieldset input[name="name"] {
     width: 35%;
 }
 
-section textarea[name="domains"] {
+section fieldset textarea[name="domains"] {
     width: 75%;
     height: 50px;
 }
 
-section textarea[name="styles"] {
+section fieldset textarea[name="styles"] {
     font-family: monospace;
     width: 75%;
     height: 200px;
