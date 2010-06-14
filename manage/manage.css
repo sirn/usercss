@@ -131,6 +131,18 @@ section fieldset label {
     color: #666;
 }
 
+section fieldset span.label {
+    display: block;
+    padding: 3px 5px;
+    /* This feels a bit out of place. But works for the time being. */
+    background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), color-stop(0.1, #e5e5e5), to(#d1d1d1));
+    border: 1px solid #999;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 0 1px 0 #fff;
+    color: #6e6e6e;
+}
+
 section fieldset span.description {
     display: block;
     font-size: 11px;
@@ -145,6 +157,12 @@ section fieldset textarea {
     resize: none;
 }
 
+section fieldset span#label-includes,
+section fieldset span#label-excludes {
+    border-bottom: none;
+    width: 75%;
+}
+
 section fieldset textarea {
     padding: 5px;
 }
@@ -153,7 +171,8 @@ section fieldset input[name="name"] {
     width: 35%;
 }
 
-section fieldset textarea[name="domains"] {
+section fieldset textarea[name="domains"],
+section fieldset textarea[name="exclusions"] {
     width: 75%;
     height: 50px;
 }
