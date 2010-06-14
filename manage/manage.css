@@ -116,26 +116,31 @@ section fieldset {
     border: 0;
 }
 
-section label {
+section fieldset p {
+    /* https://bugs.webkit.org/show_bug.cgi?id=16662 
+     * I wish Safari 5 supported this yesterday. */
+    margin-left: 20%;
+}
+
+section fieldset label {
     float: left;
-    width: 20%;
-    padding: 5px;
+    margin: 3px 0 0 -20%; padding: 0;
+    width: 19%; /* So we have a little nice spacing */
     text-align: right;
     font-size: 13px;
     color: #666;
 }
 
-section span.description {
+section fieldset span.description {
     display: block;
-    margin-left: 20%;
-    padding: 3px 0 0 10px;
     font-size: 11px;
     line-height: 11px;
+    padding: 2px 0 0 0;
     color: #aaa;
 }
 
-section input[type="text"],
-section textarea {
+section fieldset input[type="text"],
+section fieldset textarea {
     font-size: 13px;
     resize: none;
 }
@@ -144,26 +149,17 @@ section textarea {
     padding: 5px;
 }
 
-section input[type="checkbox"] {
-    margin: 6px 0 0 2px;
-}
-
 section input[name="name"] {
     width: 35%;
 }
 
 section textarea[name="domains"] {
-    width: 60%;
+    width: 75%;
     height: 50px;
 }
 
 section textarea[name="styles"] {
     font-family: monospace;
-    width: 60%;
+    width: 75%;
     height: 200px;
-}
-
-section p.submit {
-    margin-left: 20%;
-    padding-left: 10px;
 }
