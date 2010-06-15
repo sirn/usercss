@@ -86,6 +86,8 @@ var Manager = {
     
     bindForm: function(data, fn){
         const form = $('form');
+        if (data.domains === undefined)
+            data.domains = []
         
         form.name.set('value', data.name);
         form.domains.set('text', data.domains.join('\n'));
@@ -121,7 +123,7 @@ var Manager = {
     
     bindNewForm: function(){
         Manager.setTitle('New User CSS');
-        Manager.bindForm({'domains':[]}, function(event){
+        Manager.bindForm({}, function(event){
             event.stop();
             
             var data = Manager.constructDataFromForm({}, this),
