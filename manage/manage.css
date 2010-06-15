@@ -143,6 +143,11 @@ section fieldset span.label {
     color: #6e6e6e;
 }
 
+section fieldset span.label.hidden,
+section fieldset span.label.expanded {
+    cursor: pointer !important;
+}
+
 section fieldset span.label.expanded > span.text:before {
     content: url(../share/triangle-down.png);
     margin-right: 4px;
@@ -189,7 +194,7 @@ section fieldset input[name="name"] {
 }
 
 section fieldset textarea[name="domains"],
-section fieldset textarea[name="exclusions"] {
+section fieldset textarea[name="excludes"] {
     width: 75%;
     height: 50px;
 }

@@ -1,13 +1,40 @@
 var Manager = {
     
     start: function(){
-        const link = $('new');
+        const newLink = $('new'),
+              domainLabels = $$('span.label');
         styleStorage.each(Manager.createItem);
-        link.addEvent('click', function(event){
+        
+        /* Events for the "New User CSS" sidebar link. */
+        newLink.addEvent('click', function(event){
             Manager.markCurrent(this);
             Manager.bindNewForm();
         });
-        link.fireEvent('click');
+        
+        /* Events for the Includes/Excludes domain labels. */
+        domainLabels.addEvents({
+            expand: function(e){
+                this.store('state:expanded', true);
+                this.removeClass('hidden').addClass('expanded');
+                this.getNext('textarea').setStyle('display', '');
+            },
+            hide: function(e){
+                this.store('state:expanded', false);
+                this.removeClass('expanded').addClass('hidden');
+                this.getNext('textarea').setStyle('display', 'none');
+            },
+            toggle: function(e){
+                var f = this.retrieve('state:expanded') ? 'hide' : 'expand';
+                this.fireEvent(f);
+            },
+            click: function(e){
+                e.stop();
+                this.fireEvent('toggle');
+            },
+        });
+        
+        /* Defaults */
+        newLink.fireEvent('click');
     },
     
     $n: function(key) { return 'item-'+key; },
@@ -20,6 +47,13 @@ var Manager = {
     
     setTitle: function(title){
         $('title').set('text', title);
+    },
+    
+    setDomainsLabelState: function(includes, excludes){
+        const includeLabel = $('label-includes'),
+              excludeLabel = $('label-excludes');
+        includeLabel.fireEvent(includes ? 'expand' : 'hide');
+        excludeLabel.fireEvent(excludes ? 'expand' : 'hide');
     },
     
     createItem: function(key, data){
@@ -80,19 +114,29 @@ var Manager = {
         data.name = form.name.value;
         data.enabled = form.enabled.checked;
         data.domains = form.domains.value.split('\n');
+        data.excludes = form.excludes.value.split('\n');
         data.styles = form.styles.value;
         return data;
     },
     
     bindForm: function(data, fn){
         const form = $('form');
-        if (data.domains === undefined)
-            data.domains = []
+        if (data.domains === undefined)  data.domains = [];
+        if (data.excludes === undefined) data.excludes = [];
         
         form.name.set('value', data.name);
         form.domains.set('text', data.domains.join('\n'));
+        form.excludes.set('text', data.excludes.join('\n'));
         form.styles.set('text', data.styles);
         form.enabled.set('checked', data.enabled);
+        
+        /* Display */
+        if ($chk(data.domains[0]) && $chk(data.excludes[0]))
+            Manager.setDomainsLabelState(true, true);
+        else if (!$chk(data.domains[0]) && $chk(data.excludes[0]))
+            Manager.setDomainsLabelState(false, true);
+        else
+            Manager.setDomainsLabelState(true, false);
         
         form.removeEvents('submit'); // Cleanup
         if (fn)
