@@ -33,9 +33,15 @@ var styleStorage = {
     
     makeConsistent: function() {
         styleStorage.each(function(key, data){
+            // Build 2: enable/disable checkbox.
             if (data.enabled == undefined) {
                 data.enabled = true;
                 styleStorage.setItem(key, data);
+            }
+            // Build 3: support for exclusions.
+            if (data.excludes == undefined) {
+                data.excludes = [];
+                styleStorage.setItem(key, data)
             }
         });
     },

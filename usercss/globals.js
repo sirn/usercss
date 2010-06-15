@@ -2,8 +2,11 @@ function reloadStyles() {
     safari.extension.removeContentStyleSheets();
     styleStorage.each(function(key, data){
         if (data.enabled) {
-            console.log(key, 'd:', data.domains.join(', '));
-            safari.extension.addContentStyleSheet(data.styles, data.domains);
+            var styles = data.styles,
+                domains = data.domains,
+                excludes = data.excludes;
+            excludes.push(safari.extension.baseURI + '*');
+            safari.extension.addContentStyleSheet(styles, domains, excludes);
         }
     });
 }
