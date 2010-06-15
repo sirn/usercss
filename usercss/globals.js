@@ -3,12 +3,32 @@ function reloadStyles() {
     styleStorage.each(function(key, data){
         if (data.enabled) {
             var styles = data.styles,
-                domains = data.domains,
-                excludes = data.excludes;
+                domains = sanitizeRules(data.domains),
+                excludes = sanitizeRules(data.excludes);
             excludes.push(safari.extension.baseURI + '*');
             safari.extension.addContentStyleSheet(styles, domains, excludes);
         }
     });
+}
+
+function sanitizeRules(domains) {
+    /* Process domains */
+    var result = [];
+    for (var i = domains.length - 1; i >= 0; i--){
+        var domain = domains[i];
+        if (domain != '') {
+            /* Make sure user input always has trailing slash.
+             * Workaround of Safari 5's URL parsing bug. */
+            if (domain.search(/https?:\/\/(.*)\//) == -1) {
+                if (domain.substr(-1) == '*')
+                    domain = domain.substr(0, domain.length-1) + '/*';
+                else
+                    domain = domain + '/'
+            }
+            result.push(domain);
+        }
+    };
+    return result;
 }
 
 function makeConsistent() {
