@@ -1,5 +1,23 @@
 var Manager = {
     
+    start: function(){
+        Manager.populateStyles();
+        Manager.bindEvents();
+        $('new').fireEvent('click');
+    },
+    
+    populateStyles: function(){
+        styleStorage.each(Manager.createItem);
+    },
+    
+    bindEvents: function(){
+        const link = $('new');
+        link.addEvent('click', function(event){
+            Manager.markCurrent(this);
+            Manager.bindNewForm();
+        });
+    },
+    
     $n: function(key) { return 'item-'+key; },
     $p: function(key) { return $(Manager.$n(key)); },
     $a: function(key) { return Manager.$p(key).getChildren('a')[0]; },
@@ -131,26 +149,4 @@ var Manager = {
     
 }
 
-var Site = {
-    
-    start: function(){
-        Site.populateStyles();
-        Site.bindEvents();
-        $('new').fireEvent('click');
-    },
-    
-    populateStyles: function(){
-        styleStorage.each(Manager.createItem);
-    },
-    
-    bindEvents: function(){
-        const link = $('new');
-        link.addEvent('click', function(event){
-            Manager.markCurrent(this);
-            Manager.bindNewForm();
-        });
-    },
-    
-}
-
-window.addEvent('domready', function(){ Site.start(); });
+window.addEvent('domready', function(){ Manager.start(); });
