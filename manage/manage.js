@@ -1,21 +1,13 @@
 var Manager = {
     
     start: function(){
-        Manager.populateStyles();
-        Manager.bindEvents();
-        $('new').fireEvent('click');
-    },
-    
-    populateStyles: function(){
-        styleStorage.each(Manager.createItem);
-    },
-    
-    bindEvents: function(){
         const link = $('new');
+        styleStorage.each(Manager.createItem);
         link.addEvent('click', function(event){
             Manager.markCurrent(this);
             Manager.bindNewForm();
         });
+        link.fireEvent('click');
     },
     
     $n: function(key) { return 'item-'+key; },
