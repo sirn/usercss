@@ -143,6 +143,23 @@ section fieldset span.label {
     color: #6e6e6e;
 }
 
+section fieldset span.label.expanded > span.text:before {
+    content: url(../share/triangle-down.png);
+    margin-right: 4px;
+    float: left;
+}
+
+section fieldset span.label.hidden {
+    border-bottom: 1px solid #999 !important;
+    margin-bottom: 4px;
+}
+
+section fieldset span.label.hidden > span.text:before {
+    content: url(../share/triangle-right.png);
+    margin-right: 4px;
+    float: left;
+}
+
 section fieldset span.description {
     display: block;
     font-size: 11px;
