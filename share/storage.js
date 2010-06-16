@@ -26,7 +26,6 @@ var styleStorage = {
         for (var i = localStorage.length - 1; i >= 0; i--){
             var key = localStorage.key(i),
                 data = styleStorage.getItem(key);
-            data.key = key;
             fn(key, data);
         };
     },
@@ -34,12 +33,12 @@ var styleStorage = {
     makeConsistent: function() {
         styleStorage.each(function(key, data){
             // Build 2: enable/disable checkbox.
-            if (data.enabled == undefined) {
+            if (data.enabled === undefined) {
                 data.enabled = true;
                 styleStorage.setItem(key, data);
             }
             // Build 3: support for exclusions.
-            if (data.excludes == undefined) {
+            if (data.excludes === undefined) {
                 data.excludes = [];
                 styleStorage.setItem(key, data)
             }
