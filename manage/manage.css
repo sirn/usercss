@@ -181,7 +181,6 @@ section fieldset textarea {
 
 section fieldset span#label-includes,
 section fieldset span#label-excludes {
-    resize: none;
     border-bottom: none;
     width: 75%;
 }
@@ -198,6 +197,7 @@ section fieldset textarea[name="domains"],
 section fieldset textarea[name="excludes"] {
     width: 75%;
     height: 50px;
+    resize: none;
 }
 
 section fieldset textarea[name="styles"] {
