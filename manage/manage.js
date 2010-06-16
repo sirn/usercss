@@ -67,7 +67,7 @@ var Manager = {
                     click: function(event){
                         var key = this.hash.substr(1);
                         Manager.markCurrent(this);
-                        Manager.bindEditForm(key, styleStorage.getItem(key));
+                        Manager.bindEditForm(key);
                     }
                 }
             }),
@@ -148,7 +148,8 @@ var Manager = {
         }
     },
     
-    bindEditForm: function(key, data){
+    bindEditForm: function(key){
+        var data = styleStorage.getItem(key);
         Manager.setTitle(data.name)
         Manager.bindForm(data, function(event, formData){
             styleStorage.setItem(key, formData);
