@@ -176,11 +176,12 @@ section fieldset span.description {
 section fieldset input[type="text"],
 section fieldset textarea {
     font-size: 13px;
-    resize: none;
+    max-width: 90%;
 }
 
 section fieldset span#label-includes,
 section fieldset span#label-excludes {
+    resize: none;
     border-bottom: none;
     width: 75%;
 }
