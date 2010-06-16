@@ -139,47 +139,45 @@ var Manager = {
             Manager.setDomainsLabelState(true, false);
         
         form.removeEvents('submit'); // Cleanup
-        if (fn)
-            form.addEvent('submit', fn);
+        if (fn) {
+            form.addEvent('submit', function(event){
+                event.stop();
+                var formData = Manager.constructDataFromForm(data, this);
+                fn(formData);
+            });
+        }
     },
     
     bindEditForm: function(key, data){
         Manager.setTitle(data.name)
-        Manager.bindForm(data, function(event){
-            event.stop();
-            
-            data = Manager.constructDataFromForm(data, this);
-            styleStorage.setItem(key, data);
+        Manager.bindForm(data, function(event, formData){
+            styleStorage.setItem(key, formData);
             Manager.reloadStyles();
-            
             // Always update display
-            var name = data.name,
+            var name = formData.name,
                 element = Manager.$a(key);
             if (this.name.value)
                 name = this.name.value;
             Manager.setTitle(name);
             element.set('text', name);
             element.removeClass('disabled');
-            if (!data.enabled)
+            if (!formData.enabled)
                 element.addClass('disabled');
         });
     },
     
     bindNewForm: function(){
         Manager.setTitle('New User CSS');
-        Manager.bindForm({}, function(event){
-            event.stop();
-            
-            var data = Manager.constructDataFromForm({}, this),
-                key = new Date().getTime();
-            if (data.styles && data.domains) {
-                styleStorage.setItem(key, data);
-                if (!data.name)
-                    data.name = key;
-                var item = Manager.createItem(key, data);
+        Manager.bindForm({}, function(formData){
+            var key = new Date().getTime();
+            if (formData.styles && formData.domains) {
+                styleStorage.setItem(key, formData);
+                if (!formData.name)
+                    formData.name = key;
+                var item = Manager.createItem(key, formData);
                 item.getChildren('a')[0].fireEvent('click');
                 Manager.reloadStyles();
-                if (!data.enabled)
+                if (!formData.enabled)
                     item.addClass('disabled');
             }
         });
