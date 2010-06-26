@@ -196,8 +196,9 @@ section fieldset input[name="name"] {
 section fieldset textarea[name="domains"],
 section fieldset textarea[name="excludes"] {
     width: 75%;
+    min-width: 75%;
+    max-width: 75%;
     height: 50px;
-    resize: none;
 }
 
 section fieldset textarea[name="styles"] {
