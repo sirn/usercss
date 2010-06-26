@@ -151,7 +151,7 @@ var Manager = {
     bindEditForm: function(key){
         var data = styleStorage.getItem(key);
         Manager.setTitle(data.name)
-        Manager.bindForm(data, function(event, formData){
+        Manager.bindForm(data, function(formData){
             styleStorage.setItem(key, formData);
             Manager.reloadStyles();
             // Always update display
