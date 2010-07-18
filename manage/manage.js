@@ -30,7 +30,7 @@ var Manager = {
             click: function(e){
                 e.stop();
                 this.fireEvent('toggle');
-            },
+            }
         });
         
         /* Defaults */
@@ -150,7 +150,7 @@ var Manager = {
     
     bindEditForm: function(key){
         var data = styleStorage.getItem(key);
-        Manager.setTitle(data.name)
+        Manager.setTitle(data.name);
         Manager.bindForm(data, function(formData){
             styleStorage.setItem(key, formData);
             Manager.reloadStyles();
@@ -182,8 +182,8 @@ var Manager = {
                     item.addClass('disabled');
             }
         });
-    },
+    }
     
-}
+};
 
 window.addEvent('domready', function(){ Manager.start(); });

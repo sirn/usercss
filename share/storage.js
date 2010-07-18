@@ -8,7 +8,6 @@ var styleStorage = {
                 data.name = key;
             return data;
         }
-        return;
     },
     
     setItem: function(key, data) {
@@ -27,7 +26,7 @@ var styleStorage = {
             var key = localStorage.key(i),
                 data = styleStorage.getItem(key);
             fn(key, data);
-        };
+        }
     },
     
     makeConsistent: function() {
@@ -40,9 +39,9 @@ var styleStorage = {
             // Build 3: support for exclusions.
             if (data.excludes === undefined) {
                 data.excludes = [];
-                styleStorage.setItem(key, data)
+                styleStorage.setItem(key, data);
             }
         });
-    },
+    }
     
-}
+};

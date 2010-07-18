@@ -16,18 +16,18 @@ function sanitizeRules(domains) {
     var result = [];
     for (var i = domains.length - 1; i >= 0; i--){
         var domain = domains[i];
-        if (domain != '') {
+        if (domain !== '') {
             /* Make sure user input always has trailing slash.
              * Workaround of Safari 5's URL parsing bug. */
             if (domain.search(/https?:\/\/(.*)\//) == -1) {
                 if (domain.substr(-1) == '*')
                     domain = domain.substr(0, domain.length-1) + '/*';
                 else
-                    domain = domain + '/'
+                    domain = domain + '/';
             }
             result.push(domain);
         }
-    };
+    }
     return result;
 }
 
@@ -42,6 +42,8 @@ function handleCommand(event) {
         var manageURL = safari.extension.baseURI + 'manage/manage.html';
         currentWindow.openTab('foreground').url = manageURL;
         break;
+    default:
+        break;
     }
 }
 
@@ -49,6 +51,8 @@ function handleMessage(event) {
     switch (event.name) {
     case 'reloadStyles':
         reloadStyles();
+        break;
+    default:
         break;
     }
 }
