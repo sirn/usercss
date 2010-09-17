@@ -38,8 +38,8 @@ function makeConsistent() {
 function handleCommand(event) {
     switch (event.command) {
     case 'manage-user-css':
-        var currentWindow = safari.application.activeBrowserWindow;
-        var manageURL = safari.extension.baseURI + 'manage/manage.html';
+        var currentWindow = safari.application.activeBrowserWindow,
+            manageURL = safari.extension.baseURI + 'manage/manage.html';
         currentWindow.openTab('foreground').url = manageURL;
         break;
     default:
@@ -60,9 +60,7 @@ function handleMessage(event) {
 function handleValidate(event) {
     switch (event.target.identifier) {
     case 'ManageUserCssItem':
-        if (!safari.extension.settings.enableContextMenu) {
-            event.target.disabled = true;
-        }
+        event.target.disabled = !safari.extension.settings.enableContextMenu;
         break;
     default:
         break;
