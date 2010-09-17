@@ -57,7 +57,20 @@ function handleMessage(event) {
     }
 }
 
+function handleValidate(event) {
+    switch (event.target.identifier) {
+    case 'ManageUserCssItem':
+        if (!safari.extension.settings.enableContextMenu) {
+            event.target.disabled = true;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 safari.application.addEventListener('command', handleCommand, false);
 safari.application.addEventListener('message', handleMessage, false);
+safari.application.addEventListener('validate', handleValidate, false);
 makeConsistent();
 reloadStyles();
