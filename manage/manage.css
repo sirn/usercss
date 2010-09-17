@@ -13,6 +13,7 @@ body {
     border: 1px solid #646464;
     font-family: sans-serif;
     font-size: 14px/100%;
+    -khtml-user-select: none;
 }
 
 /* Header
