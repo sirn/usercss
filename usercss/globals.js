@@ -38,9 +38,13 @@ function makeConsistent() {
 function handleCommand(event) {
     switch (event.command) {
     case 'manage-user-css':
-        var currentWindow = safari.application.activeBrowserWindow,
-            manageURL = safari.extension.baseURI + 'manage/manage.html';
-        currentWindow.openTab('foreground').url = manageURL;
+        var manageURL = safari.extension.baseURI + 'manage/manage.html',
+            currentWindow = safari.application.activeBrowserWindow,
+            currentTab = currentWindow.activeTab;
+        if (currentTab.url === "")
+            currentTab.url = manageURL;
+        else
+            currentWindow.openTab('foreground').url = manageURL;
         break;
     default:
         break;
