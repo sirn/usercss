@@ -41,10 +41,8 @@ function handleCommand(event) {
         var manageURL = safari.extension.baseURI + 'manage/manage.html',
             currentWindow = safari.application.activeBrowserWindow,
             currentTab = currentWindow.activeTab;
-        if (currentTab.url === "")
-            currentTab.url = manageURL;
-        else
-            currentWindow.openTab('foreground').url = manageURL;
+        if (currentTab.url === "")    currentTab.url = manageURL;
+        else currentWindow.openTab('foreground').url = manageURL;
         break;
     default:
         break;
