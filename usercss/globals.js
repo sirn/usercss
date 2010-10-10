@@ -31,10 +31,6 @@ function sanitizeRules(domains) {
     return result;
 }
 
-function makeConsistent() {
-    styleStorage.makeConsistent();
-}
-
 function handleCommand(event) {
     switch (event.command) {
     case 'manage-user-css':
@@ -72,5 +68,4 @@ function handleValidate(event) {
 safari.application.addEventListener('command', handleCommand, false);
 safari.application.addEventListener('message', handleMessage, false);
 safari.application.addEventListener('validate', handleValidate, false);
-makeConsistent();
 reloadStyles();
