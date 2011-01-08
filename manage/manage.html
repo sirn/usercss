@@ -9,51 +9,55 @@
     <header>
       <h1>User CSS Manager</h1>
     </header>
-    <aside>
-      <ul id="list"></ul>
-      <a id="new" class="selector" href="#new">New User CSS</a>
-    </aside>
-    <section>
-      <h1 id="title">New User CSS</h1>
-      <form id="form">
-        <fieldset>
-          <p>
-            <label for="enabled">Enabled:</label>
-            <input name="enabled" type="checkbox" />
-          </p>
-          <p>
-            <label for="name">Name:</label>
-            <input name="name" type="text" />
-          </p>
-          <p>
-            <label for="domains">Domains:</label>
-            <span class="label" id="label-includes">
-              <span class="text">Includes</span>:
-            </span>
-            <textarea name="domains"></textarea>
-            <span class="label" id="label-excludes">
-              <span class="text">Excludes</span>:
-            </span>
-            <textarea name="excludes"></textarea>
-            <span class="description">
-              One rule per line. Wildcard matches all.
-              <strong>Example:</strong> http://*.apple.com/*
-            </span>
-          </p>
-          <p>
-            <label for="styles">Styles:</label>
-            <textarea name="styles"></textarea>
-            <span class="description">
-              To override page style, put <strong>!important</strong>
-              at the end of each style.
-            </span>
-          </p>
-          <p class="submit">
-            <input name="save" type="submit" value="Save" />
-          </p>
-        </fieldset>
-      </form>
-    </section>
+    <div id="container">
+      <aside>
+        <div id="list-container">
+          <ul id="list"></ul>
+        </div>
+        <a id="new" class="selector" href="#new">New User CSS</a>
+      </aside>
+      <section>
+        <h1 id="title">New User CSS</h1>
+        <form id="form">
+          <fieldset>
+            <p>
+              <label for="enabled">Enabled:</label>
+              <input name="enabled" type="checkbox" />
+            </p>
+            <p>
+              <label for="name">Name:</label>
+              <input name="name" type="text" />
+            </p>
+            <p>
+              <label for="domains">Domains:</label>
+              <span class="label" id="label-includes">
+                <span class="text">Includes</span>:
+              </span>
+              <textarea name="domains"></textarea>
+              <span class="label" id="label-excludes">
+                <span class="text">Excludes</span>:
+              </span>
+              <textarea name="excludes"></textarea>
+              <span class="description">
+                One rule per line. Wildcard matches all.
+                <strong>Example:</strong> http://*.apple.com/*
+              </span>
+            </p>
+            <p>
+              <label for="styles">Styles:</label>
+              <textarea name="styles"></textarea>
+              <span class="description">
+                To override page style, put <strong>!important</strong>
+                at the end of each style.
+              </span>
+            </p>
+            <p class="submit">
+              <input name="save" type="submit" value="Save" />
+            </p>
+          </fieldset>
+        </form>
+      </section>
+    </div>
     <script src="../share/mootools.js"></script>
     <script src="../share/storage.js"></script>
     <script src="manage.js"></script>

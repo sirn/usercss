@@ -1,61 +1,77 @@
 /* Defaults
  * ----------------------------------------------------------------------- */
 
-html {
-    background: #f0f0f0;
-}
-
 body {
-    position: absolute;
-    top: 50px; right: 50px; bottom: 50px; left: 50px;
     margin: 0; padding: 0;
-    background: #fff;
-    border: 1px solid #646464;
-    font-family: sans-serif;
+    background-color: #f0f0f0;
+    font-family: "Lucida Grande", "Lucida", "Verdana", sans-serif;
     font-size: 14px/100%;
     -khtml-user-select: none;
 }
 
-/* Header
- * ----------------------------------------------------------------------- */
-
 header {
-    display: block;
-    background: -webkit-gradient(linear, left top, left bottom, from(#bfbfbf), to(#979797));
-    height: 36px;
+    display: none;
 }
 
-header h1 {
+/* Layout
+ * ----------------------------------------------------------------------- */
+
+div#container {
+    position: absolute;
+    overflow: hidden;
+    margin: 8px;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+}
+
+div#container aside,
+div#container section {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    position: absolute;
+    top: 0; bottom: 0;
+    background-color: #fff;
+}
+
+div#container aside {
+    width: 199px;
+    border: 1px solid #bebebe;
+    border-top-color: #8e8e8e;
+}
+
+div#container section {
     display: block;
-    margin: 0; padding: 10px;
-    border-bottom: 1px solid #646464;
-    font-size: 11px;
-    line-height: 15px;
-    color: #000;
-    text-shadow: 0 1px 0 #e0e0e0;
+    -webkit-box-flex: 1;
+    left: 201px; right: 0;
+    margin: 0 0 0 8px; padding: 0;
+    border: 1px solid #bebebe;
+    border-top-color: #8e8e8e;
+    overflow: auto;
 }
 
 /* Sidebar
  * ----------------------------------------------------------------------- */
 
-aside {
-    display: block;
-    position: absolute;
-    top: 36px; right: auto; bottom: 0; left: 0;
-    width: 199px;
-    border-right: 1px solid #aaa;
-    background: #dee4ea;
-    overflow: auto;
+aside div#list-container {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 aside ul {
+    -webkit-box-flex: 1;
     margin: 0; padding: 0;
     list-style: none;
+    -webkit-background-size: auto 70px;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), color-stop(0.49999, white), color-stop(0.5, rgb(247, 247, 247)), to(rgb(247, 247, 247)));
 }
 
 aside li {
-    margin: 0; padding: 0;
     position: relative;
+    margin: 0; padding: 0;
 }
 
 aside a.selector {
@@ -74,42 +90,48 @@ aside a.selector.current {
     color: #fff;
     font-weight: bold;
     text-shadow: 0 1px 0 #333;
-    background: -webkit-gradient(linear, left top, left bottom, from(#5b92d5), to(#1654ab));
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#5b92d5), to(#1654ab));
 }
 
-aside a.delete {
+aside li a.delete {
+    display: none;
     position: absolute;
     top: 50%; right: 8px; bottom: auto; left: auto;
     margin: 0; margin-top: -7px;
     width: 14px;
     height: 14px;
-    background: url(safari-resource:/ExtensionClose.png) no-repeat;
+    background-image: url(safari-resource:/ExtensionClose.png);
+    background-repeat: no-repeat;
     text-indent: -10000em;
 }
 
-aside a.delete:hover {
+aside li:hover a.delete {
+    display: block;
+}
+
+aside li a.delete:hover {
     background-image: url(safari-resource:/ExtensionCloseHovered.png);
+}
+
+aside a#new {
+    display: block;
+    background-color: #fff;
+    border-top: 1px solid #bebebe;
 }
 
 /* Content area
  * ----------------------------------------------------------------------- */
 
-section {
-    display: block;
-    position: absolute;
-    margin: 0; padding: 0;
-    top: 36px; right: 0; bottom: 0; left: 200px;
-    overflow: auto;
-}
-
 section h1 {
-    margin: 0 0 10px; padding: 10px 15px;
-    background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#d9d9d9));
-    border-top: 1px solid #fff;
-    border-bottom: 1px solid #aaa;
+    margin: 0 0 10px; padding: 9px 15px;
+    border-bottom: 1px solid #d6d6d6;
     text-shadow: 0 1px 0 #fff;
     font-size: 16px;
-    color: #666;
+    color: #404040;
+}
+
+section form {
+    -webkit-box-flex: 2;
 }
 
 section fieldset {
@@ -136,7 +158,7 @@ section fieldset span.label {
     display: block;
     padding: 3px 5px;
     /* This feels a bit out of place. But works for the time being. */
-    background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), color-stop(0.1, #e5e5e5), to(#d1d1d1));
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), color-stop(0.1, #e5e5e5), to(#d1d1d1));
     border: 1px solid #999;
     font-size: 11px;
     font-weight: bold;
