@@ -26,14 +26,14 @@
             </p>
             <p>
               <label for="name">Name:</label>
-              <input name="name" type="text" />
+              <input name="name" type="text" placeholder="Untitled" />
             </p>
             <p>
               <label for="domains">Domains:</label>
               <span class="label" id="label-includes">
                 <span class="text">Includes</span>:
               </span>
-              <textarea name="domains"></textarea>
+              <textarea name="domains" placeholder="*"></textarea>
               <span class="label" id="label-excludes">
                 <span class="text">Excludes</span>:
               </span>
@@ -47,6 +47,7 @@
               <label for="styles">Styles:</label>
               <textarea name="styles"></textarea>
               <span class="description">
+                <strong>Required</strong>. 
                 To override page style, put <strong>!important</strong>
                 at the end of each style.
               </span>

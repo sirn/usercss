@@ -2,7 +2,8 @@ var Manager = {
     
     start: function(){
         const newLink = $('new'),
-              domainLabels = $$('span.label');
+              domainLabels = $$('span.label'),
+              form = $('form');
         styleStorage.each(Manager.createItem);
         
         /* Events for the "New User CSS" sidebar link. */
@@ -31,6 +32,17 @@ var Manager = {
                 e.stop();
                 this.fireEvent('toggle');
             }
+        });
+        
+        /* Disable save button */
+        form.addEvents({
+            keyup: function(e){
+                if (!$chk(form.styles.value)) {
+                    form.save.disabled = true;
+                } else {
+                    form.save.disabled = false;
+                }
+            },
         });
         
         /* Defaults */
@@ -129,6 +141,8 @@ var Manager = {
         form.excludes.set('text', data.excludes.join('\n'));
         form.styles.set('text', data.styles);
         form.enabled.set('checked', data.enabled);
+        
+        form.fireEvent('keyup');
         
         /* Display */
         if ($chk(data.domains[0]) && $chk(data.excludes[0]))
