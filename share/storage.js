@@ -23,9 +23,11 @@ var styleStorage = {
     
     each: function(fn) {
         for (var i = localStorage.length - 1; i >= 0; i--){
-            var key = localStorage.key(i),
-                data = styleStorage.getItem(key);
-            fn(key, data);
+            var key = localStorage.key(i);
+            if (parseInt(key)) {
+                var data = styleStorage.getItem(key);
+                fn(key, data);
+            }
         }
     },
     
