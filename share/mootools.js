@@ -294,796 +294,6 @@ function $unlink(object){
 /*
 ---
 
-name: Array
-
-description: Contains Array Prototypes like each, contains, and erase.
-
-license: MIT-style license.
-
-requires: [$util, Array.each]
-
-provides: Array
-
-...
-*/
-
-Array.implement({
-
-	every: function(fn, bind){
-		for (var i = 0, l = this.length; i < l; i++){
-			if (!fn.call(bind, this[i], i, this)) return false;
-		}
-		return true;
-	},
-
-	filter: function(fn, bind){
-		var results = [];
-		for (var i = 0, l = this.length; i < l; i++){
-			if (fn.call(bind, this[i], i, this)) results.push(this[i]);
-		}
-		return results;
-	},
-
-	clean: function(){
-		return this.filter($defined);
-	},
-
-	indexOf: function(item, from){
-		var len = this.length;
-		for (var i = (from < 0) ? Math.max(0, len + from) : from || 0; i < len; i++){
-			if (this[i] === item) return i;
-		}
-		return -1;
-	},
-
-	map: function(fn, bind){
-		var results = [];
-		for (var i = 0, l = this.length; i < l; i++) results[i] = fn.call(bind, this[i], i, this);
-		return results;
-	},
-
-	some: function(fn, bind){
-		for (var i = 0, l = this.length; i < l; i++){
-			if (fn.call(bind, this[i], i, this)) return true;
-		}
-		return false;
-	},
-
-	associate: function(keys){
-		var obj = {}, length = Math.min(this.length, keys.length);
-		for (var i = 0; i < length; i++) obj[keys[i]] = this[i];
-		return obj;
-	},
-
-	link: function(object){
-		var result = {};
-		for (var i = 0, l = this.length; i < l; i++){
-			for (var key in object){
-				if (object[key](this[i])){
-					result[key] = this[i];
-					delete object[key];
-					break;
-				}
-			}
-		}
-		return result;
-	},
-
-	contains: function(item, from){
-		return this.indexOf(item, from) != -1;
-	},
-
-	extend: function(array){
-		for (var i = 0, j = array.length; i < j; i++) this.push(array[i]);
-		return this;
-	},
-	
-	getLast: function(){
-		return (this.length) ? this[this.length - 1] : null;
-	},
-
-	getRandom: function(){
-		return (this.length) ? this[$random(0, this.length - 1)] : null;
-	},
-
-	include: function(item){
-		if (!this.contains(item)) this.push(item);
-		return this;
-	},
-
-	combine: function(array){
-		for (var i = 0, l = array.length; i < l; i++) this.include(array[i]);
-		return this;
-	},
-
-	erase: function(item){
-		for (var i = this.length; i--; i){
-			if (this[i] === item) this.splice(i, 1);
-		}
-		return this;
-	},
-
-	empty: function(){
-		this.length = 0;
-		return this;
-	},
-
-	flatten: function(){
-		var array = [];
-		for (var i = 0, l = this.length; i < l; i++){
-			var type = $type(this[i]);
-			if (!type) continue;
-			array = array.concat((type == 'array' || type == 'collection' || type == 'arguments') ? Array.flatten(this[i]) : this[i]);
-		}
-		return array;
-	},
-
-	hexToRgb: function(array){
-		if (this.length != 3) return null;
-		var rgb = this.map(function(value){
-			if (value.length == 1) value += value;
-			return value.toInt(16);
-		});
-		return (array) ? rgb : 'rgb(' + rgb + ')';
-	},
-
-	rgbToHex: function(array){
-		if (this.length < 3) return null;
-		if (this.length == 4 && this[3] == 0 && !array) return 'transparent';
-		var hex = [];
-		for (var i = 0; i < 3; i++){
-			var bit = (this[i] - 0).toString(16);
-			hex.push((bit.length == 1) ? '0' + bit : bit);
-		}
-		return (array) ? hex : '#' + hex.join('');
-	}
-
-});
-
-
-/*
----
-
-name: String
-
-description: Contains String Prototypes like camelCase, capitalize, test, and toInt.
-
-license: MIT-style license.
-
-requires: Native
-
-provides: String
-
-...
-*/
-
-String.implement({
-
-	test: function(regex, params){
-		return ((typeof regex == 'string') ? new RegExp(regex, params) : regex).test(this);
-	},
-
-	contains: function(string, separator){
-		return (separator) ? (separator + this + separator).indexOf(separator + string + separator) > -1 : this.indexOf(string) > -1;
-	},
-
-	trim: function(){
-		return this.replace(/^\s+|\s+$/g, '');
-	},
-
-	clean: function(){
-		return this.replace(/\s+/g, ' ').trim();
-	},
-
-	camelCase: function(){
-		return this.replace(/-\D/g, function(match){
-			return match.charAt(1).toUpperCase();
-		});
-	},
-
-	hyphenate: function(){
-		return this.replace(/[A-Z]/g, function(match){
-			return ('-' + match.charAt(0).toLowerCase());
-		});
-	},
-
-	capitalize: function(){
-		return this.replace(/\b[a-z]/g, function(match){
-			return match.toUpperCase();
-		});
-	},
-
-	escapeRegExp: function(){
-		return this.replace(/([-.*+?^${}()|[\]\/\\])/g, '\\$1');
-	},
-
-	toInt: function(base){
-		return parseInt(this, base || 10);
-	},
-
-	toFloat: function(){
-		return parseFloat(this);
-	},
-
-	hexToRgb: function(array){
-		var hex = this.match(/^#?(\w{1,2})(\w{1,2})(\w{1,2})$/);
-		return (hex) ? hex.slice(1).hexToRgb(array) : null;
-	},
-
-	rgbToHex: function(array){
-		var rgb = this.match(/\d{1,3}/g);
-		return (rgb) ? rgb.rgbToHex(array) : null;
-	},
-
-	stripScripts: function(option){
-		var scripts = '';
-		var text = this.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function(){
-			scripts += arguments[1] + '\n';
-			return '';
-		});
-		if (option === true) $exec(scripts);
-		else if ($type(option) == 'function') option(scripts, text);
-		return text;
-	},
-
-	substitute: function(object, regexp){
-		return this.replace(regexp || (/\\?\{([^{}]+)\}/g), function(match, name){
-			if (match.charAt(0) == '\\') return match.slice(1);
-			return (object[name] != undefined) ? object[name] : '';
-		});
-	}
-
-});
-
-
-/*
----
-
-name: Function
-
-description: Contains Function Prototypes like create, bind, pass, and delay.
-
-license: MIT-style license.
-
-requires: [Native, $util]
-
-provides: Function
-
-...
-*/
-
-try {
-	delete Function.prototype.bind;
-} catch(e){}
-
-Function.implement({
-
-	extend: function(properties){
-		for (var property in properties) this[property] = properties[property];
-		return this;
-	},
-
-	create: function(options){
-		var self = this;
-		options = options || {};
-		return function(event){
-			var args = options.arguments;
-			args = (args != undefined) ? $splat(args) : Array.slice(arguments, (options.event) ? 1 : 0);
-			if (options.event) args = [event || window.event].extend(args);
-			var returns = function(){
-				return self.apply(options.bind || null, args);
-			};
-			if (options.delay) return setTimeout(returns, options.delay);
-			if (options.periodical) return setInterval(returns, options.periodical);
-			if (options.attempt) return $try(returns);
-			return returns();
-		};
-	},
-
-	run: function(args, bind){
-		return this.apply(bind, $splat(args));
-	},
-
-	pass: function(args, bind){
-		return this.create({bind: bind, arguments: args});
-	},
-
-	bind: function(bind, args){
-		return this.create({bind: bind, arguments: args});
-	},
-
-	bindWithEvent: function(bind, args){
-		return this.create({bind: bind, arguments: args, event: true});
-	},
-
-	attempt: function(args, bind){
-		return this.create({bind: bind, arguments: args, attempt: true})();
-	},
-
-	delay: function(delay, bind, args){
-		return this.create({bind: bind, arguments: args, delay: delay})();
-	},
-
-	periodical: function(periodical, bind, args){
-		return this.create({bind: bind, arguments: args, periodical: periodical})();
-	}
-
-});
-
-
-/*
----
-
-name: Number
-
-description: Contains Number Prototypes like limit, round, times, and ceil.
-
-license: MIT-style license.
-
-requires: [Native, $util]
-
-provides: Number
-
-...
-*/
-
-Number.implement({
-
-	limit: function(min, max){
-		return Math.min(max, Math.max(min, this));
-	},
-
-	round: function(precision){
-		precision = Math.pow(10, precision || 0);
-		return Math.round(this * precision) / precision;
-	},
-
-	times: function(fn, bind){
-		for (var i = 0; i < this; i++) fn.call(bind, i, this);
-	},
-
-	toFloat: function(){
-		return parseFloat(this);
-	},
-
-	toInt: function(base){
-		return parseInt(this, base || 10);
-	}
-
-});
-
-Number.alias('times', 'each');
-
-(function(math){
-	var methods = {};
-	math.each(function(name){
-		if (!Number[name]) methods[name] = function(){
-			return Math[name].apply(null, [this].concat($A(arguments)));
-		};
-	});
-	Number.implement(methods);
-})(['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max', 'min', 'pow', 'sin', 'sqrt', 'tan']);
-
-
-/*
----
-
-name: Hash
-
-description: Contains Hash Prototypes. Provides a means for overcoming the JavaScript practical impossibility of extending native Objects.
-
-license: MIT-style license.
-
-requires: Hash.base
-
-provides: Hash
-
-...
-*/
-
-Hash.implement({
-
-	has: Object.prototype.hasOwnProperty,
-
-	keyOf: function(value){
-		for (var key in this){
-			if (this.hasOwnProperty(key) && this[key] === value) return key;
-		}
-		return null;
-	},
-
-	hasValue: function(value){
-		return (Hash.keyOf(this, value) !== null);
-	},
-
-	extend: function(properties){
-		Hash.each(properties || {}, function(value, key){
-			Hash.set(this, key, value);
-		}, this);
-		return this;
-	},
-
-	combine: function(properties){
-		Hash.each(properties || {}, function(value, key){
-			Hash.include(this, key, value);
-		}, this);
-		return this;
-	},
-
-	erase: function(key){
-		if (this.hasOwnProperty(key)) delete this[key];
-		return this;
-	},
-
-	get: function(key){
-		return (this.hasOwnProperty(key)) ? this[key] : null;
-	},
-
-	set: function(key, value){
-		if (!this[key] || this.hasOwnProperty(key)) this[key] = value;
-		return this;
-	},
-
-	empty: function(){
-		Hash.each(this, function(value, key){
-			delete this[key];
-		}, this);
-		return this;
-	},
-
-	include: function(key, value){
-		if (this[key] == undefined) this[key] = value;
-		return this;
-	},
-
-	map: function(fn, bind){
-		var results = new Hash;
-		Hash.each(this, function(value, key){
-			results.set(key, fn.call(bind, value, key, this));
-		}, this);
-		return results;
-	},
-
-	filter: function(fn, bind){
-		var results = new Hash;
-		Hash.each(this, function(value, key){
-			if (fn.call(bind, value, key, this)) results.set(key, value);
-		}, this);
-		return results;
-	},
-
-	every: function(fn, bind){
-		for (var key in this){
-			if (this.hasOwnProperty(key) && !fn.call(bind, this[key], key)) return false;
-		}
-		return true;
-	},
-
-	some: function(fn, bind){
-		for (var key in this){
-			if (this.hasOwnProperty(key) && fn.call(bind, this[key], key)) return true;
-		}
-		return false;
-	},
-
-	getKeys: function(){
-		var keys = [];
-		Hash.each(this, function(value, key){
-			keys.push(key);
-		});
-		return keys;
-	},
-
-	getValues: function(){
-		var values = [];
-		Hash.each(this, function(value){
-			values.push(value);
-		});
-		return values;
-	},
-
-	toQueryString: function(base){
-		var queryString = [];
-		Hash.each(this, function(value, key){
-			if (base) key = base + '[' + key + ']';
-			var result;
-			switch ($type(value)){
-				case 'object': result = Hash.toQueryString(value, key); break;
-				case 'array':
-					var qs = {};
-					value.each(function(val, i){
-						qs[i] = val;
-					});
-					result = Hash.toQueryString(qs, key);
-				break;
-				default: result = key + '=' + encodeURIComponent(value);
-			}
-			if (value != undefined) queryString.push(result);
-		});
-
-		return queryString.join('&');
-	}
-
-});
-
-Hash.alias({keyOf: 'indexOf', hasValue: 'contains'});
-
-
-/*
----
-
-name: Class
-
-description: Contains the Class Function for easily creating, extending, and implementing reusable Classes.
-
-license: MIT-style license.
-
-requires: [$util, Native, Array, String, Function, Number, Hash]
-
-provides: Class
-
-...
-*/
-
-function Class(params){
-	
-	if (params instanceof Function) params = {initialize: params};
-	
-	var newClass = function(){
-		Object.reset(this);
-		if (newClass._prototyping) return this;
-		this._current = $empty;
-		var value = (this.initialize) ? this.initialize.apply(this, arguments) : this;
-		delete this._current; delete this.caller;
-		return value;
-	}.extend(this);
-	
-	newClass.implement(params);
-	
-	newClass.constructor = Class;
-	newClass.prototype.constructor = newClass;
-
-	return newClass;
-
-};
-
-Function.prototype.protect = function(){
-	this._protected = true;
-	return this;
-};
-
-Object.reset = function(object, key){
-		
-	if (key == null){
-		for (var p in object) Object.reset(object, p);
-		return object;
-	}
-	
-	delete object[key];
-	
-	switch ($type(object[key])){
-		case 'object':
-			var F = function(){};
-			F.prototype = object[key];
-			var i = new F;
-			object[key] = Object.reset(i);
-		break;
-		case 'array': object[key] = $unlink(object[key]); break;
-	}
-	
-	return object;
-	
-};
-
-new Native({name: 'Class', initialize: Class}).extend({
-
-	instantiate: function(F){
-		F._prototyping = true;
-		var proto = new F;
-		delete F._prototyping;
-		return proto;
-	},
-	
-	wrap: function(self, key, method){
-		if (method._origin) method = method._origin;
-		
-		return function(){
-			if (method._protected && this._current == null) throw new Error('The method "' + key + '" cannot be called.');
-			var caller = this.caller, current = this._current;
-			this.caller = current; this._current = arguments.callee;
-			var result = method.apply(this, arguments);
-			this._current = current; this.caller = caller;
-			return result;
-		}.extend({_owner: self, _origin: method, _name: key});
-
-	}
-	
-});
-
-Class.implement({
-	
-	implement: function(key, value){
-		
-		if ($type(key) == 'object'){
-			for (var p in key) this.implement(p, key[p]);
-			return this;
-		}
-		
-		var mutator = Class.Mutators[key];
-		
-		if (mutator){
-			value = mutator.call(this, value);
-			if (value == null) return this;
-		}
-		
-		var proto = this.prototype;
-
-		switch ($type(value)){
-			
-			case 'function':
-				if (value._hidden) return this;
-				proto[key] = Class.wrap(this, key, value);
-			break;
-			
-			case 'object':
-				var previous = proto[key];
-				if ($type(previous) == 'object') $mixin(previous, value);
-				else proto[key] = $unlink(value);
-			break;
-			
-			case 'array':
-				proto[key] = $unlink(value);
-			break;
-			
-			default: proto[key] = value;
-
-		}
-		
-		return this;
-
-	}
-	
-});
-
-Class.Mutators = {
-	
-	Extends: function(parent){
-
-		this.parent = parent;
-		this.prototype = Class.instantiate(parent);
-
-		this.implement('parent', function(){
-			var name = this.caller._name, previous = this.caller._owner.parent.prototype[name];
-			if (!previous) throw new Error('The method "' + name + '" has no parent.');
-			return previous.apply(this, arguments);
-		}.protect());
-
-	},
-
-	Implements: function(items){
-		$splat(items).each(function(item){
-			if (item instanceof Function) item = Class.instantiate(item);
-			this.implement(item);
-		}, this);
-
-	}
-	
-};
-
-
-/*
----
-
-name: Class.Extras
-
-description: Contains Utility Classes that can be implemented into your own Classes to ease the execution of many common tasks.
-
-license: MIT-style license.
-
-requires: Class
-
-provides: [Chain, Events, Options, Class.Extras]
-
-...
-*/
-
-var Chain = new Class({
-
-	$chain: [],
-
-	chain: function(){
-		this.$chain.extend(Array.flatten(arguments));
-		return this;
-	},
-
-	callChain: function(){
-		return (this.$chain.length) ? this.$chain.shift().apply(this, arguments) : false;
-	},
-
-	clearChain: function(){
-		this.$chain.empty();
-		return this;
-	}
-
-});
-
-var Events = new Class({
-
-	$events: {},
-
-	addEvent: function(type, fn, internal){
-		type = Events.removeOn(type);
-		if (fn != $empty){
-			this.$events[type] = this.$events[type] || [];
-			this.$events[type].include(fn);
-			if (internal) fn.internal = true;
-		}
-		return this;
-	},
-
-	addEvents: function(events){
-		for (var type in events) this.addEvent(type, events[type]);
-		return this;
-	},
-
-	fireEvent: function(type, args, delay){
-		type = Events.removeOn(type);
-		if (!this.$events || !this.$events[type]) return this;
-		this.$events[type].each(function(fn){
-			fn.create({'bind': this, 'delay': delay, 'arguments': args})();
-		}, this);
-		return this;
-	},
-
-	removeEvent: function(type, fn){
-		type = Events.removeOn(type);
-		if (!this.$events[type]) return this;
-		if (!fn.internal) this.$events[type].erase(fn);
-		return this;
-	},
-
-	removeEvents: function(events){
-		var type;
-		if ($type(events) == 'object'){
-			for (type in events) this.removeEvent(type, events[type]);
-			return this;
-		}
-		if (events) events = Events.removeOn(events);
-		for (type in this.$events){
-			if (events && events != type) continue;
-			var fns = this.$events[type];
-			for (var i = fns.length; i--; i) this.removeEvent(type, fns[i]);
-		}
-		return this;
-	}
-
-});
-
-Events.removeOn = function(string){
-	return string.replace(/^on([A-Z])/, function(full, first){
-		return first.toLowerCase();
-	});
-};
-
-var Options = new Class({
-
-	setOptions: function(){
-		this.options = $merge.run([this.options].extend(arguments));
-		if (!this.addEvent) return this;
-		for (var option in this.options){
-			if ($type(this.options[option]) != 'function' || !(/^on[A-Z]/).test(option)) continue;
-			this.addEvent(option, this.options[option]);
-			delete this.options[option];
-		}
-		return this;
-	}
-
-});
-
-
-/*
----
-
 name: Browser
 
 description: The Browser Core. Contains Browser initialization, Window and Document, and the Browser Hash.
@@ -1247,6 +457,648 @@ var Document = new Native({
 Document.Prototype = {$family: {name: 'document'}};
 
 new Document(document);
+
+
+/*
+---
+
+name: Array
+
+description: Contains Array Prototypes like each, contains, and erase.
+
+license: MIT-style license.
+
+requires: [$util, Array.each]
+
+provides: Array
+
+...
+*/
+
+Array.implement({
+
+	every: function(fn, bind){
+		for (var i = 0, l = this.length; i < l; i++){
+			if (!fn.call(bind, this[i], i, this)) return false;
+		}
+		return true;
+	},
+
+	filter: function(fn, bind){
+		var results = [];
+		for (var i = 0, l = this.length; i < l; i++){
+			if (fn.call(bind, this[i], i, this)) results.push(this[i]);
+		}
+		return results;
+	},
+
+	clean: function(){
+		return this.filter($defined);
+	},
+
+	indexOf: function(item, from){
+		var len = this.length;
+		for (var i = (from < 0) ? Math.max(0, len + from) : from || 0; i < len; i++){
+			if (this[i] === item) return i;
+		}
+		return -1;
+	},
+
+	map: function(fn, bind){
+		var results = [];
+		for (var i = 0, l = this.length; i < l; i++) results[i] = fn.call(bind, this[i], i, this);
+		return results;
+	},
+
+	some: function(fn, bind){
+		for (var i = 0, l = this.length; i < l; i++){
+			if (fn.call(bind, this[i], i, this)) return true;
+		}
+		return false;
+	},
+
+	associate: function(keys){
+		var obj = {}, length = Math.min(this.length, keys.length);
+		for (var i = 0; i < length; i++) obj[keys[i]] = this[i];
+		return obj;
+	},
+
+	link: function(object){
+		var result = {};
+		for (var i = 0, l = this.length; i < l; i++){
+			for (var key in object){
+				if (object[key](this[i])){
+					result[key] = this[i];
+					delete object[key];
+					break;
+				}
+			}
+		}
+		return result;
+	},
+
+	contains: function(item, from){
+		return this.indexOf(item, from) != -1;
+	},
+
+	extend: function(array){
+		for (var i = 0, j = array.length; i < j; i++) this.push(array[i]);
+		return this;
+	},
+	
+	getLast: function(){
+		return (this.length) ? this[this.length - 1] : null;
+	},
+
+	getRandom: function(){
+		return (this.length) ? this[$random(0, this.length - 1)] : null;
+	},
+
+	include: function(item){
+		if (!this.contains(item)) this.push(item);
+		return this;
+	},
+
+	combine: function(array){
+		for (var i = 0, l = array.length; i < l; i++) this.include(array[i]);
+		return this;
+	},
+
+	erase: function(item){
+		for (var i = this.length; i--; i){
+			if (this[i] === item) this.splice(i, 1);
+		}
+		return this;
+	},
+
+	empty: function(){
+		this.length = 0;
+		return this;
+	},
+
+	flatten: function(){
+		var array = [];
+		for (var i = 0, l = this.length; i < l; i++){
+			var type = $type(this[i]);
+			if (!type) continue;
+			array = array.concat((type == 'array' || type == 'collection' || type == 'arguments') ? Array.flatten(this[i]) : this[i]);
+		}
+		return array;
+	},
+
+	hexToRgb: function(array){
+		if (this.length != 3) return null;
+		var rgb = this.map(function(value){
+			if (value.length == 1) value += value;
+			return value.toInt(16);
+		});
+		return (array) ? rgb : 'rgb(' + rgb + ')';
+	},
+
+	rgbToHex: function(array){
+		if (this.length < 3) return null;
+		if (this.length == 4 && this[3] == 0 && !array) return 'transparent';
+		var hex = [];
+		for (var i = 0; i < 3; i++){
+			var bit = (this[i] - 0).toString(16);
+			hex.push((bit.length == 1) ? '0' + bit : bit);
+		}
+		return (array) ? hex : '#' + hex.join('');
+	}
+
+});
+
+
+/*
+---
+
+name: Function
+
+description: Contains Function Prototypes like create, bind, pass, and delay.
+
+license: MIT-style license.
+
+requires: [Native, $util]
+
+provides: Function
+
+...
+*/
+
+try {
+	delete Function.prototype.bind;
+} catch(e){}
+
+Function.implement({
+
+	extend: function(properties){
+		for (var property in properties) this[property] = properties[property];
+		return this;
+	},
+
+	create: function(options){
+		var self = this;
+		options = options || {};
+		return function(event){
+			var args = options.arguments;
+			args = (args != undefined) ? $splat(args) : Array.slice(arguments, (options.event) ? 1 : 0);
+			if (options.event) args = [event || window.event].extend(args);
+			var returns = function(){
+				return self.apply(options.bind || null, args);
+			};
+			if (options.delay) return setTimeout(returns, options.delay);
+			if (options.periodical) return setInterval(returns, options.periodical);
+			if (options.attempt) return $try(returns);
+			return returns();
+		};
+	},
+
+	run: function(args, bind){
+		return this.apply(bind, $splat(args));
+	},
+
+	pass: function(args, bind){
+		return this.create({bind: bind, arguments: args});
+	},
+
+	bind: function(bind, args){
+		return this.create({bind: bind, arguments: args});
+	},
+
+	bindWithEvent: function(bind, args){
+		return this.create({bind: bind, arguments: args, event: true});
+	},
+
+	attempt: function(args, bind){
+		return this.create({bind: bind, arguments: args, attempt: true})();
+	},
+
+	delay: function(delay, bind, args){
+		return this.create({bind: bind, arguments: args, delay: delay})();
+	},
+
+	periodical: function(periodical, bind, args){
+		return this.create({bind: bind, arguments: args, periodical: periodical})();
+	}
+
+});
+
+
+/*
+---
+
+name: Number
+
+description: Contains Number Prototypes like limit, round, times, and ceil.
+
+license: MIT-style license.
+
+requires: [Native, $util]
+
+provides: Number
+
+...
+*/
+
+Number.implement({
+
+	limit: function(min, max){
+		return Math.min(max, Math.max(min, this));
+	},
+
+	round: function(precision){
+		precision = Math.pow(10, precision || 0);
+		return Math.round(this * precision) / precision;
+	},
+
+	times: function(fn, bind){
+		for (var i = 0; i < this; i++) fn.call(bind, i, this);
+	},
+
+	toFloat: function(){
+		return parseFloat(this);
+	},
+
+	toInt: function(base){
+		return parseInt(this, base || 10);
+	}
+
+});
+
+Number.alias('times', 'each');
+
+(function(math){
+	var methods = {};
+	math.each(function(name){
+		if (!Number[name]) methods[name] = function(){
+			return Math[name].apply(null, [this].concat($A(arguments)));
+		};
+	});
+	Number.implement(methods);
+})(['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max', 'min', 'pow', 'sin', 'sqrt', 'tan']);
+
+
+/*
+---
+
+name: String
+
+description: Contains String Prototypes like camelCase, capitalize, test, and toInt.
+
+license: MIT-style license.
+
+requires: Native
+
+provides: String
+
+...
+*/
+
+String.implement({
+
+	test: function(regex, params){
+		return ((typeof regex == 'string') ? new RegExp(regex, params) : regex).test(this);
+	},
+
+	contains: function(string, separator){
+		return (separator) ? (separator + this + separator).indexOf(separator + string + separator) > -1 : this.indexOf(string) > -1;
+	},
+
+	trim: function(){
+		return this.replace(/^\s+|\s+$/g, '');
+	},
+
+	clean: function(){
+		return this.replace(/\s+/g, ' ').trim();
+	},
+
+	camelCase: function(){
+		return this.replace(/-\D/g, function(match){
+			return match.charAt(1).toUpperCase();
+		});
+	},
+
+	hyphenate: function(){
+		return this.replace(/[A-Z]/g, function(match){
+			return ('-' + match.charAt(0).toLowerCase());
+		});
+	},
+
+	capitalize: function(){
+		return this.replace(/\b[a-z]/g, function(match){
+			return match.toUpperCase();
+		});
+	},
+
+	escapeRegExp: function(){
+		return this.replace(/([-.*+?^${}()|[\]\/\\])/g, '\\$1');
+	},
+
+	toInt: function(base){
+		return parseInt(this, base || 10);
+	},
+
+	toFloat: function(){
+		return parseFloat(this);
+	},
+
+	hexToRgb: function(array){
+		var hex = this.match(/^#?(\w{1,2})(\w{1,2})(\w{1,2})$/);
+		return (hex) ? hex.slice(1).hexToRgb(array) : null;
+	},
+
+	rgbToHex: function(array){
+		var rgb = this.match(/\d{1,3}/g);
+		return (rgb) ? rgb.rgbToHex(array) : null;
+	},
+
+	stripScripts: function(option){
+		var scripts = '';
+		var text = this.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function(){
+			scripts += arguments[1] + '\n';
+			return '';
+		});
+		if (option === true) $exec(scripts);
+		else if ($type(option) == 'function') option(scripts, text);
+		return text;
+	},
+
+	substitute: function(object, regexp){
+		return this.replace(regexp || (/\\?\{([^{}]+)\}/g), function(match, name){
+			if (match.charAt(0) == '\\') return match.slice(1);
+			return (object[name] != undefined) ? object[name] : '';
+		});
+	}
+
+});
+
+
+/*
+---
+
+name: Hash
+
+description: Contains Hash Prototypes. Provides a means for overcoming the JavaScript practical impossibility of extending native Objects.
+
+license: MIT-style license.
+
+requires: Hash.base
+
+provides: Hash
+
+...
+*/
+
+Hash.implement({
+
+	has: Object.prototype.hasOwnProperty,
+
+	keyOf: function(value){
+		for (var key in this){
+			if (this.hasOwnProperty(key) && this[key] === value) return key;
+		}
+		return null;
+	},
+
+	hasValue: function(value){
+		return (Hash.keyOf(this, value) !== null);
+	},
+
+	extend: function(properties){
+		Hash.each(properties || {}, function(value, key){
+			Hash.set(this, key, value);
+		}, this);
+		return this;
+	},
+
+	combine: function(properties){
+		Hash.each(properties || {}, function(value, key){
+			Hash.include(this, key, value);
+		}, this);
+		return this;
+	},
+
+	erase: function(key){
+		if (this.hasOwnProperty(key)) delete this[key];
+		return this;
+	},
+
+	get: function(key){
+		return (this.hasOwnProperty(key)) ? this[key] : null;
+	},
+
+	set: function(key, value){
+		if (!this[key] || this.hasOwnProperty(key)) this[key] = value;
+		return this;
+	},
+
+	empty: function(){
+		Hash.each(this, function(value, key){
+			delete this[key];
+		}, this);
+		return this;
+	},
+
+	include: function(key, value){
+		if (this[key] == undefined) this[key] = value;
+		return this;
+	},
+
+	map: function(fn, bind){
+		var results = new Hash;
+		Hash.each(this, function(value, key){
+			results.set(key, fn.call(bind, value, key, this));
+		}, this);
+		return results;
+	},
+
+	filter: function(fn, bind){
+		var results = new Hash;
+		Hash.each(this, function(value, key){
+			if (fn.call(bind, value, key, this)) results.set(key, value);
+		}, this);
+		return results;
+	},
+
+	every: function(fn, bind){
+		for (var key in this){
+			if (this.hasOwnProperty(key) && !fn.call(bind, this[key], key)) return false;
+		}
+		return true;
+	},
+
+	some: function(fn, bind){
+		for (var key in this){
+			if (this.hasOwnProperty(key) && fn.call(bind, this[key], key)) return true;
+		}
+		return false;
+	},
+
+	getKeys: function(){
+		var keys = [];
+		Hash.each(this, function(value, key){
+			keys.push(key);
+		});
+		return keys;
+	},
+
+	getValues: function(){
+		var values = [];
+		Hash.each(this, function(value){
+			values.push(value);
+		});
+		return values;
+	},
+
+	toQueryString: function(base){
+		var queryString = [];
+		Hash.each(this, function(value, key){
+			if (base) key = base + '[' + key + ']';
+			var result;
+			switch ($type(value)){
+				case 'object': result = Hash.toQueryString(value, key); break;
+				case 'array':
+					var qs = {};
+					value.each(function(val, i){
+						qs[i] = val;
+					});
+					result = Hash.toQueryString(qs, key);
+				break;
+				default: result = key + '=' + encodeURIComponent(value);
+			}
+			if (value != undefined) queryString.push(result);
+		});
+
+		return queryString.join('&');
+	}
+
+});
+
+Hash.alias({keyOf: 'indexOf', hasValue: 'contains'});
+
+
+/*
+---
+
+name: Event
+
+description: Contains the Event Class, to make the event object cross-browser.
+
+license: MIT-style license.
+
+requires: [Window, Document, Hash, Array, Function, String]
+
+provides: Event
+
+...
+*/
+
+var Event = new Native({
+
+	name: 'Event',
+
+	initialize: function(event, win){
+		win = win || window;
+		var doc = win.document;
+		event = event || win.event;
+		if (event.$extended) return event;
+		this.$extended = true;
+		var type = event.type;
+		var target = event.target || event.srcElement;
+		while (target && target.nodeType == 3) target = target.parentNode;
+
+		if (type.test(/key/)){
+			var code = event.which || event.keyCode;
+			var key = Event.Keys.keyOf(code);
+			if (type == 'keydown'){
+				var fKey = code - 111;
+				if (fKey > 0 && fKey < 13) key = 'f' + fKey;
+			}
+			key = key || String.fromCharCode(code).toLowerCase();
+		} else if (type.match(/(click|mouse|menu)/i)){
+			doc = (!doc.compatMode || doc.compatMode == 'CSS1Compat') ? doc.html : doc.body;
+			var page = {
+				x: event.pageX || event.clientX + doc.scrollLeft,
+				y: event.pageY || event.clientY + doc.scrollTop
+			};
+			var client = {
+				x: (event.pageX) ? event.pageX - win.pageXOffset : event.clientX,
+				y: (event.pageY) ? event.pageY - win.pageYOffset : event.clientY
+			};
+			if (type.match(/DOMMouseScroll|mousewheel/)){
+				var wheel = (event.wheelDelta) ? event.wheelDelta / 120 : -(event.detail || 0) / 3;
+			}
+			var rightClick = (event.which == 3) || (event.button == 2);
+			var related = null;
+			if (type.match(/over|out/)){
+				switch (type){
+					case 'mouseover': related = event.relatedTarget || event.fromElement; break;
+					case 'mouseout': related = event.relatedTarget || event.toElement;
+				}
+				if (!(function(){
+					while (related && related.nodeType == 3) related = related.parentNode;
+					return true;
+				}).create({attempt: Browser.Engine.gecko})()) related = false;
+			}
+		}
+
+		return $extend(this, {
+			event: event,
+			type: type,
+
+			page: page,
+			client: client,
+			rightClick: rightClick,
+
+			wheel: wheel,
+
+			relatedTarget: related,
+			target: target,
+
+			code: code,
+			key: key,
+
+			shift: event.shiftKey,
+			control: event.ctrlKey,
+			alt: event.altKey,
+			meta: event.metaKey
+		});
+	}
+
+});
+
+Event.Keys = new Hash({
+	'enter': 13,
+	'up': 38,
+	'down': 40,
+	'left': 37,
+	'right': 39,
+	'esc': 27,
+	'space': 32,
+	'backspace': 8,
+	'tab': 9,
+	'delete': 46
+});
+
+Event.implement({
+
+	stop: function(){
+		return this.stopPropagation().preventDefault();
+	},
+
+	stopPropagation: function(){
+		if (this.event.stopPropagation) this.event.stopPropagation();
+		else this.event.cancelBubble = true;
+		return this;
+	},
+
+	preventDefault: function(){
+		if (this.event.preventDefault) this.event.preventDefault();
+		else this.event.returnValue = false;
+		return this;
+	}
+
+});
 
 
 /*
@@ -1976,389 +1828,6 @@ if (Browser.Engine.webkit && Browser.Engine.version < 420) Element.Properties.te
 /*
 ---
 
-name: Element.Dimensions
-
-description: Contains methods to work with size, scroll, or positioning of Elements and the window object.
-
-license: MIT-style license.
-
-credits:
-  - Element positioning based on the [qooxdoo](http://qooxdoo.org/) code and smart browser fixes, [LGPL License](http://www.gnu.org/licenses/lgpl.html).
-  - Viewport dimensions based on [YUI](http://developer.yahoo.com/yui/) code, [BSD License](http://developer.yahoo.com/yui/license.html).
-
-requires: Element
-
-provides: Element.Dimensions
-
-...
-*/
-
-(function(){
-
-Element.implement({
-
-	scrollTo: function(x, y){
-		if (isBody(this)){
-			this.getWindow().scrollTo(x, y);
-		} else {
-			this.scrollLeft = x;
-			this.scrollTop = y;
-		}
-		return this;
-	},
-
-	getSize: function(){
-		if (isBody(this)) return this.getWindow().getSize();
-		return {x: this.offsetWidth, y: this.offsetHeight};
-	},
-
-	getScrollSize: function(){
-		if (isBody(this)) return this.getWindow().getScrollSize();
-		return {x: this.scrollWidth, y: this.scrollHeight};
-	},
-
-	getScroll: function(){
-		if (isBody(this)) return this.getWindow().getScroll();
-		return {x: this.scrollLeft, y: this.scrollTop};
-	},
-
-	getScrolls: function(){
-		var element = this, position = {x: 0, y: 0};
-		while (element && !isBody(element)){
-			position.x += element.scrollLeft;
-			position.y += element.scrollTop;
-			element = element.parentNode;
-		}
-		return position;
-	},
-
-	getOffsetParent: function(){
-		var element = this;
-		if (isBody(element)) return null;
-		if (!Browser.Engine.trident) return element.offsetParent;
-		while ((element = element.parentNode) && !isBody(element)){
-			if (styleString(element, 'position') != 'static') return element;
-		}
-		return null;
-	},
-
-	getOffsets: function(){
-		if (this.getBoundingClientRect){
-			var bound = this.getBoundingClientRect(),
-				html = document.id(this.getDocument().documentElement),
-				htmlScroll = html.getScroll(),
-				elemScrolls = this.getScrolls(),
-				elemScroll = this.getScroll(),
-				isFixed = (styleString(this, 'position') == 'fixed');
-
-			return {
-				x: bound.left.toInt() + elemScrolls.x - elemScroll.x + ((isFixed) ? 0 : htmlScroll.x) - html.clientLeft,
-				y: bound.top.toInt()  + elemScrolls.y - elemScroll.y + ((isFixed) ? 0 : htmlScroll.y) - html.clientTop
-			};
-		}
-
-		var element = this, position = {x: 0, y: 0};
-		if (isBody(this)) return position;
-
-		while (element && !isBody(element)){
-			position.x += element.offsetLeft;
-			position.y += element.offsetTop;
-
-			if (Browser.Engine.gecko){
-				if (!borderBox(element)){
-					position.x += leftBorder(element);
-					position.y += topBorder(element);
-				}
-				var parent = element.parentNode;
-				if (parent && styleString(parent, 'overflow') != 'visible'){
-					position.x += leftBorder(parent);
-					position.y += topBorder(parent);
-				}
-			} else if (element != this && Browser.Engine.webkit){
-				position.x += leftBorder(element);
-				position.y += topBorder(element);
-			}
-
-			element = element.offsetParent;
-		}
-		if (Browser.Engine.gecko && !borderBox(this)){
-			position.x -= leftBorder(this);
-			position.y -= topBorder(this);
-		}
-		return position;
-	},
-
-	getPosition: function(relative){
-		if (isBody(this)) return {x: 0, y: 0};
-		var offset = this.getOffsets(),
-				scroll = this.getScrolls();
-		var position = {
-			x: offset.x - scroll.x,
-			y: offset.y - scroll.y
-		};
-		var relativePosition = (relative && (relative = document.id(relative))) ? relative.getPosition() : {x: 0, y: 0};
-		return {x: position.x - relativePosition.x, y: position.y - relativePosition.y};
-	},
-
-	getCoordinates: function(element){
-		if (isBody(this)) return this.getWindow().getCoordinates();
-		var position = this.getPosition(element),
-				size = this.getSize();
-		var obj = {
-			left: position.x,
-			top: position.y,
-			width: size.x,
-			height: size.y
-		};
-		obj.right = obj.left + obj.width;
-		obj.bottom = obj.top + obj.height;
-		return obj;
-	},
-
-	computePosition: function(obj){
-		return {
-			left: obj.x - styleNumber(this, 'margin-left'),
-			top: obj.y - styleNumber(this, 'margin-top')
-		};
-	},
-
-	setPosition: function(obj){
-		return this.setStyles(this.computePosition(obj));
-	}
-
-});
-
-
-Native.implement([Document, Window], {
-
-	getSize: function(){
-		if (Browser.Engine.presto || Browser.Engine.webkit){
-			var win = this.getWindow();
-			return {x: win.innerWidth, y: win.innerHeight};
-		}
-		var doc = getCompatElement(this);
-		return {x: doc.clientWidth, y: doc.clientHeight};
-	},
-
-	getScroll: function(){
-		var win = this.getWindow(), doc = getCompatElement(this);
-		return {x: win.pageXOffset || doc.scrollLeft, y: win.pageYOffset || doc.scrollTop};
-	},
-
-	getScrollSize: function(){
-		var doc = getCompatElement(this), min = this.getSize();
-		return {x: Math.max(doc.scrollWidth, min.x), y: Math.max(doc.scrollHeight, min.y)};
-	},
-
-	getPosition: function(){
-		return {x: 0, y: 0};
-	},
-
-	getCoordinates: function(){
-		var size = this.getSize();
-		return {top: 0, left: 0, bottom: size.y, right: size.x, height: size.y, width: size.x};
-	}
-
-});
-
-// private methods
-
-var styleString = Element.getComputedStyle;
-
-function styleNumber(element, style){
-	return styleString(element, style).toInt() || 0;
-};
-
-function borderBox(element){
-	return styleString(element, '-moz-box-sizing') == 'border-box';
-};
-
-function topBorder(element){
-	return styleNumber(element, 'border-top-width');
-};
-
-function leftBorder(element){
-	return styleNumber(element, 'border-left-width');
-};
-
-function isBody(element){
-	return (/^(?:body|html)$/i).test(element.tagName);
-};
-
-function getCompatElement(element){
-	var doc = element.getDocument();
-	return (!doc.compatMode || doc.compatMode == 'CSS1Compat') ? doc.html : doc.body;
-};
-
-})();
-
-//aliases
-Element.alias('setPosition', 'position'); //compatability
-
-Native.implement([Window, Document, Element], {
-
-	getHeight: function(){
-		return this.getSize().y;
-	},
-
-	getWidth: function(){
-		return this.getSize().x;
-	},
-
-	getScrollTop: function(){
-		return this.getScroll().y;
-	},
-
-	getScrollLeft: function(){
-		return this.getScroll().x;
-	},
-
-	getScrollHeight: function(){
-		return this.getScrollSize().y;
-	},
-
-	getScrollWidth: function(){
-		return this.getScrollSize().x;
-	},
-
-	getTop: function(){
-		return this.getPosition().y;
-	},
-
-	getLeft: function(){
-		return this.getPosition().x;
-	}
-
-});
-
-
-/*
----
-
-name: Event
-
-description: Contains the Event Class, to make the event object cross-browser.
-
-license: MIT-style license.
-
-requires: [Window, Document, Hash, Array, Function, String]
-
-provides: Event
-
-...
-*/
-
-var Event = new Native({
-
-	name: 'Event',
-
-	initialize: function(event, win){
-		win = win || window;
-		var doc = win.document;
-		event = event || win.event;
-		if (event.$extended) return event;
-		this.$extended = true;
-		var type = event.type;
-		var target = event.target || event.srcElement;
-		while (target && target.nodeType == 3) target = target.parentNode;
-
-		if (type.test(/key/)){
-			var code = event.which || event.keyCode;
-			var key = Event.Keys.keyOf(code);
-			if (type == 'keydown'){
-				var fKey = code - 111;
-				if (fKey > 0 && fKey < 13) key = 'f' + fKey;
-			}
-			key = key || String.fromCharCode(code).toLowerCase();
-		} else if (type.match(/(click|mouse|menu)/i)){
-			doc = (!doc.compatMode || doc.compatMode == 'CSS1Compat') ? doc.html : doc.body;
-			var page = {
-				x: event.pageX || event.clientX + doc.scrollLeft,
-				y: event.pageY || event.clientY + doc.scrollTop
-			};
-			var client = {
-				x: (event.pageX) ? event.pageX - win.pageXOffset : event.clientX,
-				y: (event.pageY) ? event.pageY - win.pageYOffset : event.clientY
-			};
-			if (type.match(/DOMMouseScroll|mousewheel/)){
-				var wheel = (event.wheelDelta) ? event.wheelDelta / 120 : -(event.detail || 0) / 3;
-			}
-			var rightClick = (event.which == 3) || (event.button == 2);
-			var related = null;
-			if (type.match(/over|out/)){
-				switch (type){
-					case 'mouseover': related = event.relatedTarget || event.fromElement; break;
-					case 'mouseout': related = event.relatedTarget || event.toElement;
-				}
-				if (!(function(){
-					while (related && related.nodeType == 3) related = related.parentNode;
-					return true;
-				}).create({attempt: Browser.Engine.gecko})()) related = false;
-			}
-		}
-
-		return $extend(this, {
-			event: event,
-			type: type,
-
-			page: page,
-			client: client,
-			rightClick: rightClick,
-
-			wheel: wheel,
-
-			relatedTarget: related,
-			target: target,
-
-			code: code,
-			key: key,
-
-			shift: event.shiftKey,
-			control: event.ctrlKey,
-			alt: event.altKey,
-			meta: event.metaKey
-		});
-	}
-
-});
-
-Event.Keys = new Hash({
-	'enter': 13,
-	'up': 38,
-	'down': 40,
-	'left': 37,
-	'right': 39,
-	'esc': 27,
-	'space': 32,
-	'backspace': 8,
-	'tab': 9,
-	'delete': 46
-});
-
-Event.implement({
-
-	stop: function(){
-		return this.stopPropagation().preventDefault();
-	},
-
-	stopPropagation: function(){
-		if (this.event.stopPropagation) this.event.stopPropagation();
-		else this.event.cancelBubble = true;
-		return this;
-	},
-
-	preventDefault: function(){
-		if (this.event.preventDefault) this.event.preventDefault();
-		else this.event.returnValue = false;
-		return this;
-	}
-
-});
-
-
-/*
----
-
 name: Element.Event
 
 description: Contains Element methods for dealing with events. This file also includes mouseenter and mouseleave custom Element Events.
@@ -2668,1137 +2137,6 @@ Element.ShortStyles = {margin: {}, padding: {}, border: {}, borderWidth: {}, bor
 	Short.borderStyle[bds] = Short[bd][bds] = All[bds] = '@';
 	Short.borderColor[bdc] = Short[bd][bdc] = All[bdc] = 'rgb(@, @, @)';
 });
-
-
-/*
----
-
-name: Fx
-
-description: Contains the basic animation logic to be extended by all other Fx Classes.
-
-license: MIT-style license.
-
-requires: [Chain, Events, Options]
-
-provides: Fx
-
-...
-*/
-
-var Fx = new Class({
-
-	Implements: [Chain, Events, Options],
-
-	options: {
-		/*
-		onStart: $empty,
-		onCancel: $empty,
-		onComplete: $empty,
-		*/
-		fps: 50,
-		unit: false,
-		duration: 500,
-		link: 'ignore'
-	},
-
-	initialize: function(options){
-		this.subject = this.subject || this;
-		this.setOptions(options);
-		this.options.duration = Fx.Durations[this.options.duration] || this.options.duration.toInt();
-		var wait = this.options.wait;
-		if (wait === false) this.options.link = 'cancel';
-	},
-
-	getTransition: function(){
-		return function(p){
-			return -(Math.cos(Math.PI * p) - 1) / 2;
-		};
-	},
-
-	step: function(){
-		var time = $time();
-		if (time < this.time + this.options.duration){
-			var delta = this.transition((time - this.time) / this.options.duration);
-			this.set(this.compute(this.from, this.to, delta));
-		} else {
-			this.set(this.compute(this.from, this.to, 1));
-			this.complete();
-		}
-	},
-
-	set: function(now){
-		return now;
-	},
-
-	compute: function(from, to, delta){
-		return Fx.compute(from, to, delta);
-	},
-
-	check: function(){
-		if (!this.timer) return true;
-		switch (this.options.link){
-			case 'cancel': this.cancel(); return true;
-			case 'chain': this.chain(this.caller.bind(this, arguments)); return false;
-		}
-		return false;
-	},
-
-	start: function(from, to){
-		if (!this.check(from, to)) return this;
-		this.from = from;
-		this.to = to;
-		this.time = 0;
-		this.transition = this.getTransition();
-		this.startTimer();
-		this.onStart();
-		return this;
-	},
-
-	complete: function(){
-		if (this.stopTimer()) this.onComplete();
-		return this;
-	},
-
-	cancel: function(){
-		if (this.stopTimer()) this.onCancel();
-		return this;
-	},
-
-	onStart: function(){
-		this.fireEvent('start', this.subject);
-	},
-
-	onComplete: function(){
-		this.fireEvent('complete', this.subject);
-		if (!this.callChain()) this.fireEvent('chainComplete', this.subject);
-	},
-
-	onCancel: function(){
-		this.fireEvent('cancel', this.subject).clearChain();
-	},
-
-	pause: function(){
-		this.stopTimer();
-		return this;
-	},
-
-	resume: function(){
-		this.startTimer();
-		return this;
-	},
-
-	stopTimer: function(){
-		if (!this.timer) return false;
-		this.time = $time() - this.time;
-		this.timer = $clear(this.timer);
-		return true;
-	},
-
-	startTimer: function(){
-		if (this.timer) return false;
-		this.time = $time() - this.time;
-		this.timer = this.step.periodical(Math.round(1000 / this.options.fps), this);
-		return true;
-	}
-
-});
-
-Fx.compute = function(from, to, delta){
-	return (to - from) * delta + from;
-};
-
-Fx.Durations = {'short': 250, 'normal': 500, 'long': 1000};
-
-
-/*
----
-
-name: Fx.CSS
-
-description: Contains the CSS animation logic. Used by Fx.Tween, Fx.Morph, Fx.Elements.
-
-license: MIT-style license.
-
-requires: [Fx, Element.Style]
-
-provides: Fx.CSS
-
-...
-*/
-
-Fx.CSS = new Class({
-
-	Extends: Fx,
-
-	//prepares the base from/to object
-
-	prepare: function(element, property, values){
-		values = $splat(values);
-		var values1 = values[1];
-		if (!$chk(values1)){
-			values[1] = values[0];
-			values[0] = element.getStyle(property);
-		}
-		var parsed = values.map(this.parse);
-		return {from: parsed[0], to: parsed[1]};
-	},
-
-	//parses a value into an array
-
-	parse: function(value){
-		value = $lambda(value)();
-		value = (typeof value == 'string') ? value.split(' ') : $splat(value);
-		return value.map(function(val){
-			val = String(val);
-			var found = false;
-			Fx.CSS.Parsers.each(function(parser, key){
-				if (found) return;
-				var parsed = parser.parse(val);
-				if ($chk(parsed)) found = {value: parsed, parser: parser};
-			});
-			found = found || {value: val, parser: Fx.CSS.Parsers.String};
-			return found;
-		});
-	},
-
-	//computes by a from and to prepared objects, using their parsers.
-
-	compute: function(from, to, delta){
-		var computed = [];
-		(Math.min(from.length, to.length)).times(function(i){
-			computed.push({value: from[i].parser.compute(from[i].value, to[i].value, delta), parser: from[i].parser});
-		});
-		computed.$family = {name: 'fx:css:value'};
-		return computed;
-	},
-
-	//serves the value as settable
-
-	serve: function(value, unit){
-		if ($type(value) != 'fx:css:value') value = this.parse(value);
-		var returned = [];
-		value.each(function(bit){
-			returned = returned.concat(bit.parser.serve(bit.value, unit));
-		});
-		return returned;
-	},
-
-	//renders the change to an element
-
-	render: function(element, property, value, unit){
-		element.setStyle(property, this.serve(value, unit));
-	},
-
-	//searches inside the page css to find the values for a selector
-
-	search: function(selector){
-		if (Fx.CSS.Cache[selector]) return Fx.CSS.Cache[selector];
-		var to = {};
-		Array.each(document.styleSheets, function(sheet, j){
-			var href = sheet.href;
-			if (href && href.contains('://') && !href.contains(document.domain)) return;
-			var rules = sheet.rules || sheet.cssRules;
-			Array.each(rules, function(rule, i){
-				if (!rule.style) return;
-				var selectorText = (rule.selectorText) ? rule.selectorText.replace(/^\w+/, function(m){
-					return m.toLowerCase();
-				}) : null;
-				if (!selectorText || !selectorText.test('^' + selector + '$')) return;
-				Element.Styles.each(function(value, style){
-					if (!rule.style[style] || Element.ShortStyles[style]) return;
-					value = String(rule.style[style]);
-					to[style] = (value.test(/^rgb/)) ? value.rgbToHex() : value;
-				});
-			});
-		});
-		return Fx.CSS.Cache[selector] = to;
-	}
-
-});
-
-Fx.CSS.Cache = {};
-
-Fx.CSS.Parsers = new Hash({
-
-	Color: {
-		parse: function(value){
-			if (value.match(/^#[0-9a-f]{3,6}$/i)) return value.hexToRgb(true);
-			return ((value = value.match(/(\d+),\s*(\d+),\s*(\d+)/))) ? [value[1], value[2], value[3]] : false;
-		},
-		compute: function(from, to, delta){
-			return from.map(function(value, i){
-				return Math.round(Fx.compute(from[i], to[i], delta));
-			});
-		},
-		serve: function(value){
-			return value.map(Number);
-		}
-	},
-
-	Number: {
-		parse: parseFloat,
-		compute: Fx.compute,
-		serve: function(value, unit){
-			return (unit) ? value + unit : value;
-		}
-	},
-
-	String: {
-		parse: $lambda(false),
-		compute: $arguments(1),
-		serve: $arguments(0)
-	}
-
-});
-
-
-/*
----
-
-name: Fx.Morph
-
-description: Formerly Fx.Styles, effect to transition any number of CSS properties for an element using an object of rules, or CSS based selector rules.
-
-license: MIT-style license.
-
-requires: Fx.CSS
-
-provides: Fx.Morph
-
-...
-*/
-
-Fx.Morph = new Class({
-
-	Extends: Fx.CSS,
-
-	initialize: function(element, options){
-		this.element = this.subject = document.id(element);
-		this.parent(options);
-	},
-
-	set: function(now){
-		if (typeof now == 'string') now = this.search(now);
-		for (var p in now) this.render(this.element, p, now[p], this.options.unit);
-		return this;
-	},
-
-	compute: function(from, to, delta){
-		var now = {};
-		for (var p in from) now[p] = this.parent(from[p], to[p], delta);
-		return now;
-	},
-
-	start: function(properties){
-		if (!this.check(properties)) return this;
-		if (typeof properties == 'string') properties = this.search(properties);
-		var from = {}, to = {};
-		for (var p in properties){
-			var parsed = this.prepare(this.element, p, properties[p]);
-			from[p] = parsed.from;
-			to[p] = parsed.to;
-		}
-		return this.parent(from, to);
-	}
-
-});
-
-Element.Properties.morph = {
-
-	set: function(options){
-		var morph = this.retrieve('morph');
-		if (morph) morph.cancel();
-		return this.eliminate('morph').store('morph:options', $extend({link: 'cancel'}, options));
-	},
-
-	get: function(options){
-		if (options || !this.retrieve('morph')){
-			if (options || !this.retrieve('morph:options')) this.set('morph', options);
-			this.store('morph', new Fx.Morph(this, this.retrieve('morph:options')));
-		}
-		return this.retrieve('morph');
-	}
-
-};
-
-Element.implement({
-
-	morph: function(props){
-		this.get('morph').start(props);
-		return this;
-	}
-
-});
-
-
-/*
----
-
-name: Fx.Transitions
-
-description: Contains a set of advanced transitions to be used with any of the Fx Classes.
-
-license: MIT-style license.
-
-credits: Easing Equations by Robert Penner, <http://www.robertpenner.com/easing/>, modified and optimized to be used with MooTools.
-
-requires: Fx
-
-provides: Fx.Transitions
-
-...
-*/
-
-Fx.implement({
-
-	getTransition: function(){
-		var trans = this.options.transition || Fx.Transitions.Sine.easeInOut;
-		if (typeof trans == 'string'){
-			var data = trans.split(':');
-			trans = Fx.Transitions;
-			trans = trans[data[0]] || trans[data[0].capitalize()];
-			if (data[1]) trans = trans['ease' + data[1].capitalize() + (data[2] ? data[2].capitalize() : '')];
-		}
-		return trans;
-	}
-
-});
-
-Fx.Transition = function(transition, params){
-	params = $splat(params);
-	return $extend(transition, {
-		easeIn: function(pos){
-			return transition(pos, params);
-		},
-		easeOut: function(pos){
-			return 1 - transition(1 - pos, params);
-		},
-		easeInOut: function(pos){
-			return (pos <= 0.5) ? transition(2 * pos, params) / 2 : (2 - transition(2 * (1 - pos), params)) / 2;
-		}
-	});
-};
-
-Fx.Transitions = new Hash({
-
-	linear: $arguments(0)
-
-});
-
-Fx.Transitions.extend = function(transitions){
-	for (var transition in transitions) Fx.Transitions[transition] = new Fx.Transition(transitions[transition]);
-};
-
-Fx.Transitions.extend({
-
-	Pow: function(p, x){
-		return Math.pow(p, x[0] || 6);
-	},
-
-	Expo: function(p){
-		return Math.pow(2, 8 * (p - 1));
-	},
-
-	Circ: function(p){
-		return 1 - Math.sin(Math.acos(p));
-	},
-
-	Sine: function(p){
-		return 1 - Math.sin((1 - p) * Math.PI / 2);
-	},
-
-	Back: function(p, x){
-		x = x[0] || 1.618;
-		return Math.pow(p, 2) * ((x + 1) * p - x);
-	},
-
-	Bounce: function(p){
-		var value;
-		for (var a = 0, b = 1; 1; a += b, b /= 2){
-			if (p >= (7 - 4 * a) / 11){
-				value = b * b - Math.pow((11 - 6 * a - 11 * p) / 4, 2);
-				break;
-			}
-		}
-		return value;
-	},
-
-	Elastic: function(p, x){
-		return Math.pow(2, 10 * --p) * Math.cos(20 * p * Math.PI * (x[0] || 1) / 3);
-	}
-
-});
-
-['Quad', 'Cubic', 'Quart', 'Quint'].each(function(transition, i){
-	Fx.Transitions[transition] = new Fx.Transition(function(p){
-		return Math.pow(p, [i + 2]);
-	});
-});
-
-
-/*
----
-
-name: Fx.Tween
-
-description: Formerly Fx.Style, effect to transition any CSS property for an element.
-
-license: MIT-style license.
-
-requires: Fx.CSS
-
-provides: [Fx.Tween, Element.fade, Element.highlight]
-
-...
-*/
-
-Fx.Tween = new Class({
-
-	Extends: Fx.CSS,
-
-	initialize: function(element, options){
-		this.element = this.subject = document.id(element);
-		this.parent(options);
-	},
-
-	set: function(property, now){
-		if (arguments.length == 1){
-			now = property;
-			property = this.property || this.options.property;
-		}
-		this.render(this.element, property, now, this.options.unit);
-		return this;
-	},
-
-	start: function(property, from, to){
-		if (!this.check(property, from, to)) return this;
-		var args = Array.flatten(arguments);
-		this.property = this.options.property || args.shift();
-		var parsed = this.prepare(this.element, this.property, args);
-		return this.parent(parsed.from, parsed.to);
-	}
-
-});
-
-Element.Properties.tween = {
-
-	set: function(options){
-		var tween = this.retrieve('tween');
-		if (tween) tween.cancel();
-		return this.eliminate('tween').store('tween:options', $extend({link: 'cancel'}, options));
-	},
-
-	get: function(options){
-		if (options || !this.retrieve('tween')){
-			if (options || !this.retrieve('tween:options')) this.set('tween', options);
-			this.store('tween', new Fx.Tween(this, this.retrieve('tween:options')));
-		}
-		return this.retrieve('tween');
-	}
-
-};
-
-Element.implement({
-
-	tween: function(property, from, to){
-		this.get('tween').start(arguments);
-		return this;
-	},
-
-	fade: function(how){
-		var fade = this.get('tween'), o = 'opacity', toggle;
-		how = $pick(how, 'toggle');
-		switch (how){
-			case 'in': fade.start(o, 1); break;
-			case 'out': fade.start(o, 0); break;
-			case 'show': fade.set(o, 1); break;
-			case 'hide': fade.set(o, 0); break;
-			case 'toggle':
-				var flag = this.retrieve('fade:flag', this.get('opacity') == 1);
-				fade.start(o, (flag) ? 0 : 1);
-				this.store('fade:flag', !flag);
-				toggle = true;
-			break;
-			default: fade.start(o, arguments);
-		}
-		if (!toggle) this.eliminate('fade:flag');
-		return this;
-	},
-
-	highlight: function(start, end){
-		if (!end){
-			end = this.retrieve('highlight:original', this.getStyle('background-color'));
-			end = (end == 'transparent') ? '#fff' : end;
-		}
-		var tween = this.get('tween');
-		tween.start('background-color', start || '#ffff88', end).chain(function(){
-			this.setStyle('background-color', this.retrieve('highlight:original'));
-			tween.callChain();
-		}.bind(this));
-		return this;
-	}
-
-});
-
-
-/*
----
-
-name: Request
-
-description: Powerful all purpose Request Class. Uses XMLHTTPRequest.
-
-license: MIT-style license.
-
-requires: [Element, Chain, Events, Options, Browser]
-
-provides: Request
-
-...
-*/
-
-var Request = new Class({
-
-	Implements: [Chain, Events, Options],
-
-	options: {/*
-		onRequest: $empty,
-		onComplete: $empty,
-		onCancel: $empty,
-		onSuccess: $empty,
-		onFailure: $empty,
-		onException: $empty,*/
-		url: '',
-		data: '',
-		headers: {
-			'X-Requested-With': 'XMLHttpRequest',
-			'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
-		},
-		async: true,
-		format: false,
-		method: 'post',
-		link: 'ignore',
-		isSuccess: null,
-		emulation: true,
-		urlEncoded: true,
-		encoding: 'utf-8',
-		evalScripts: false,
-		evalResponse: false,
-		noCache: false
-	},
-
-	initialize: function(options){
-		this.xhr = new Browser.Request();
-		this.setOptions(options);
-		this.options.isSuccess = this.options.isSuccess || this.isSuccess;
-		this.headers = new Hash(this.options.headers);
-	},
-
-	onStateChange: function(){
-		if (this.xhr.readyState != 4 || !this.running) return;
-		this.running = false;
-		this.status = 0;
-		$try(function(){
-			this.status = this.xhr.status;
-		}.bind(this));
-		this.xhr.onreadystatechange = $empty;
-		if (this.options.isSuccess.call(this, this.status)){
-			this.response = {text: this.xhr.responseText, xml: this.xhr.responseXML};
-			this.success(this.response.text, this.response.xml);
-		} else {
-			this.response = {text: null, xml: null};
-			this.failure();
-		}
-	},
-
-	isSuccess: function(){
-		return ((this.status >= 200) && (this.status < 300));
-	},
-
-	processScripts: function(text){
-		if (this.options.evalResponse || (/(ecma|java)script/).test(this.getHeader('Content-type'))) return $exec(text);
-		return text.stripScripts(this.options.evalScripts);
-	},
-
-	success: function(text, xml){
-		this.onSuccess(this.processScripts(text), xml);
-	},
-
-	onSuccess: function(){
-		this.fireEvent('complete', arguments).fireEvent('success', arguments).callChain();
-	},
-
-	failure: function(){
-		this.onFailure();
-	},
-
-	onFailure: function(){
-		this.fireEvent('complete').fireEvent('failure', this.xhr);
-	},
-
-	setHeader: function(name, value){
-		this.headers.set(name, value);
-		return this;
-	},
-
-	getHeader: function(name){
-		return $try(function(){
-			return this.xhr.getResponseHeader(name);
-		}.bind(this));
-	},
-
-	check: function(){
-		if (!this.running) return true;
-		switch (this.options.link){
-			case 'cancel': this.cancel(); return true;
-			case 'chain': this.chain(this.caller.bind(this, arguments)); return false;
-		}
-		return false;
-	},
-
-	send: function(options){
-		if (!this.check(options)) return this;
-		this.running = true;
-
-		var type = $type(options);
-		if (type == 'string' || type == 'element') options = {data: options};
-
-		var old = this.options;
-		options = $extend({data: old.data, url: old.url, method: old.method}, options);
-		var data = options.data, url = String(options.url), method = options.method.toLowerCase();
-
-		switch ($type(data)){
-			case 'element': data = document.id(data).toQueryString(); break;
-			case 'object': case 'hash': data = Hash.toQueryString(data);
-		}
-
-		if (this.options.format){
-			var format = 'format=' + this.options.format;
-			data = (data) ? format + '&' + data : format;
-		}
-
-		if (this.options.emulation && !['get', 'post'].contains(method)){
-			var _method = '_method=' + method;
-			data = (data) ? _method + '&' + data : _method;
-			method = 'post';
-		}
-
-		if (this.options.urlEncoded && method == 'post'){
-			var encoding = (this.options.encoding) ? '; charset=' + this.options.encoding : '';
-			this.headers.set('Content-type', 'application/x-www-form-urlencoded' + encoding);
-		}
-
-		if (this.options.noCache){
-			var noCache = 'noCache=' + new Date().getTime();
-			data = (data) ? noCache + '&' + data : noCache;
-		}
-
-		var trimPosition = url.lastIndexOf('/');
-		if (trimPosition > -1 && (trimPosition = url.indexOf('#')) > -1) url = url.substr(0, trimPosition);
-
-		if (data && method == 'get'){
-			url = url + (url.contains('?') ? '&' : '?') + data;
-			data = null;
-		}
-
-		this.xhr.open(method.toUpperCase(), url, this.options.async);
-
-		this.xhr.onreadystatechange = this.onStateChange.bind(this);
-
-		this.headers.each(function(value, key){
-			try {
-				this.xhr.setRequestHeader(key, value);
-			} catch (e){
-				this.fireEvent('exception', [key, value]);
-			}
-		}, this);
-
-		this.fireEvent('request');
-		this.xhr.send(data);
-		if (!this.options.async) this.onStateChange();
-		return this;
-	},
-
-	cancel: function(){
-		if (!this.running) return this;
-		this.running = false;
-		this.xhr.abort();
-		this.xhr.onreadystatechange = $empty;
-		this.xhr = new Browser.Request();
-		this.fireEvent('cancel');
-		return this;
-	}
-
-});
-
-(function(){
-
-var methods = {};
-['get', 'post', 'put', 'delete', 'GET', 'POST', 'PUT', 'DELETE'].each(function(method){
-	methods[method] = function(){
-		var params = Array.link(arguments, {url: String.type, data: $defined});
-		return this.send($extend(params, {method: method}));
-	};
-});
-
-Request.implement(methods);
-
-})();
-
-Element.Properties.send = {
-
-	set: function(options){
-		var send = this.retrieve('send');
-		if (send) send.cancel();
-		return this.eliminate('send').store('send:options', $extend({
-			data: this, link: 'cancel', method: this.get('method') || 'post', url: this.get('action')
-		}, options));
-	},
-
-	get: function(options){
-		if (options || !this.retrieve('send')){
-			if (options || !this.retrieve('send:options')) this.set('send', options);
-			this.store('send', new Request(this.retrieve('send:options')));
-		}
-		return this.retrieve('send');
-	}
-
-};
-
-Element.implement({
-
-	send: function(url){
-		var sender = this.get('send');
-		sender.send({data: this, url: url || sender.options.url});
-		return this;
-	}
-
-});
-
-
-/*
----
-
-name: Request.HTML
-
-description: Extends the basic Request Class with additional methods for interacting with HTML responses.
-
-license: MIT-style license.
-
-requires: [Request, Element]
-
-provides: Request.HTML
-
-...
-*/
-
-Request.HTML = new Class({
-
-	Extends: Request,
-
-	options: {
-		update: false,
-		append: false,
-		evalScripts: true,
-		filter: false
-	},
-
-	processHTML: function(text){
-		var match = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-		text = (match) ? match[1] : text;
-
-		var container = new Element('div');
-
-		return $try(function(){
-			var root = '<root>' + text + '</root>', doc;
-			if (Browser.Engine.trident){
-				doc = new ActiveXObject('Microsoft.XMLDOM');
-				doc.async = false;
-				doc.loadXML(root);
-			} else {
-				doc = new DOMParser().parseFromString(root, 'text/xml');
-			}
-			root = doc.getElementsByTagName('root')[0];
-			if (!root) return null;
-			for (var i = 0, k = root.childNodes.length; i < k; i++){
-				var child = Element.clone(root.childNodes[i], true, true);
-				if (child) container.grab(child);
-			}
-			return container;
-		}) || container.set('html', text);
-	},
-
-	success: function(text){
-		var options = this.options, response = this.response;
-
-		response.html = text.stripScripts(function(script){
-			response.javascript = script;
-		});
-
-		var temp = this.processHTML(response.html);
-
-		response.tree = temp.childNodes;
-		response.elements = temp.getElements('*');
-
-		if (options.filter) response.tree = response.elements.filter(options.filter);
-		if (options.update) document.id(options.update).empty().set('html', response.html);
-		else if (options.append) document.id(options.append).adopt(temp.getChildren());
-		if (options.evalScripts) $exec(response.javascript);
-
-		this.onSuccess(response.tree, response.elements, response.html, response.javascript);
-	}
-
-});
-
-Element.Properties.load = {
-
-	set: function(options){
-		var load = this.retrieve('load');
-		if (load) load.cancel();
-		return this.eliminate('load').store('load:options', $extend({data: this, link: 'cancel', update: this, method: 'get'}, options));
-	},
-
-	get: function(options){
-		if (options || ! this.retrieve('load')){
-			if (options || !this.retrieve('load:options')) this.set('load', options);
-			this.store('load', new Request.HTML(this.retrieve('load:options')));
-		}
-		return this.retrieve('load');
-	}
-
-};
-
-Element.implement({
-
-	load: function(){
-		this.get('load').send(Array.link(arguments, {data: Object.type, url: String.type}));
-		return this;
-	}
-
-});
-
-
-/*
----
-
-name: JSON
-
-description: JSON encoder and decoder.
-
-license: MIT-style license.
-
-see: <http://www.json.org/>
-
-requires: [Array, String, Number, Function, Hash]
-
-provides: JSON
-
-...
-*/
-
-var JSON = new Hash(this.JSON && {
-	stringify: JSON.stringify,
-	parse: JSON.parse
-}).extend({
-	
-	$specialChars: {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'},
-
-	$replaceChars: function(chr){
-		return JSON.$specialChars[chr] || '\\u00' + Math.floor(chr.charCodeAt() / 16).toString(16) + (chr.charCodeAt() % 16).toString(16);
-	},
-
-	encode: function(obj){
-		switch ($type(obj)){
-			case 'string':
-				return '"' + obj.replace(/[\x00-\x1f\\"]/g, JSON.$replaceChars) + '"';
-			case 'array':
-				return '[' + String(obj.map(JSON.encode).clean()) + ']';
-			case 'object': case 'hash':
-				var string = [];
-				Hash.each(obj, function(value, key){
-					var json = JSON.encode(value);
-					if (json) string.push(JSON.encode(key) + ':' + json);
-				});
-				return '{' + string + '}';
-			case 'number': case 'boolean': return String(obj);
-			case false: return 'null';
-		}
-		return null;
-	},
-
-	decode: function(string, secure){
-		if ($type(string) != 'string' || !string.length) return null;
-		if (secure && !(/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(string.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, ''))) return null;
-		return eval('(' + string + ')');
-	}
-
-});
-
-
-/*
----
-
-name: Request.JSON
-
-description: Extends the basic Request Class with additional methods for sending and receiving JSON data.
-
-license: MIT-style license.
-
-requires: [Request, JSON]
-
-provides: [Request.JSON]
-
-...
-*/
-
-Request.JSON = new Class({
-
-	Extends: Request,
-
-	options: {
-		secure: true
-	},
-
-	initialize: function(options){
-		this.parent(options);
-		this.headers.extend({'Accept': 'application/json', 'X-Request': 'JSON'});
-	},
-
-	success: function(text){
-		this.response.json = JSON.decode(text, this.options.secure);
-		this.onSuccess(this.response.json, text);
-	}
-
-});
-
-
-/*
----
-
-name: Cookie
-
-description: Class for creating, reading, and deleting browser Cookies.
-
-license: MIT-style license.
-
-credits: Based on the functions by Peter-Paul Koch (http://quirksmode.org).
-
-requires: Options
-
-provides: Cookie
-
-...
-*/
-
-var Cookie = new Class({
-
-	Implements: Options,
-
-	options: {
-		path: false,
-		domain: false,
-		duration: false,
-		secure: false,
-		document: document
-	},
-
-	initialize: function(key, options){
-		this.key = key;
-		this.setOptions(options);
-	},
-
-	write: function(value){
-		value = encodeURIComponent(value);
-		if (this.options.domain) value += '; domain=' + this.options.domain;
-		if (this.options.path) value += '; path=' + this.options.path;
-		if (this.options.duration){
-			var date = new Date();
-			date.setTime(date.getTime() + this.options.duration * 24 * 60 * 60 * 1000);
-			value += '; expires=' + date.toGMTString();
-		}
-		if (this.options.secure) value += '; secure';
-		this.options.document.cookie = this.key + '=' + value;
-		return this;
-	},
-
-	read: function(){
-		var value = this.options.document.cookie.match('(?:^|;)\\s*' + this.key.escapeRegExp() + '=([^;]*)');
-		return (value) ? decodeURIComponent(value[1]) : null;
-	},
-
-	dispose: function(){
-		new Cookie(this.key, $merge(this.options, {duration: -1})).write('');
-		return this;
-	}
-
-});
-
-Cookie.write = function(key, value, options){
-	return new Cookie(key, options).write(value);
-};
-
-Cookie.read = function(key){
-	return new Cookie(key).read();
-};
-
-Cookie.dispose = function(key, options){
-	return new Cookie(key, options).dispose();
-};
-
-
-/*
----
-
-name: DomReady
-
-description: Contains the custom event domready.
-
-license: MIT-style license.
-
-requires: Element.Event
-
-provides: DomReady
-
-...
-*/
-
-Element.Events.domready = {
-
-	onAdd: function(fn){
-		if (Browser.loaded) fn.call(this);
-	}
-
-};
-
-(function(){
-
-	var domready = function(){
-		if (Browser.loaded) return;
-		Browser.loaded = true;
-		window.fireEvent('domready');
-		document.fireEvent('domready');
-	};
-	
-	window.addEvent('load', domready);
-
-	if (Browser.Engine.trident){
-		var temp = document.createElement('div');
-		(function(){
-			($try(function(){
-				temp.doScroll(); // Technique by Diego Perini
-				return document.id(temp).inject(document.body).set('html', 'temp').dispose();
-			})) ? domready() : arguments.callee.delay(50);
-		})();
-	} else if (Browser.Engine.webkit && Browser.Engine.version < 525){
-		(function(){
-			(['loaded', 'complete'].contains(document.readyState)) ? domready() : arguments.callee.delay(50);
-		})();
-	} else {
-		document.addEvent('DOMContentLoaded', domready);
-	}
-
-})();
 
 
 /*
@@ -4181,108 +2519,109 @@ Selectors.Pseudo = new Hash({
 /*
 ---
 
-name: Swiff
+name: DomReady
 
-description: Wrapper for embedding SWF movies. Supports External Interface Communication.
+description: Contains the custom event domready.
 
 license: MIT-style license.
 
-credits: Flash detection & Internet Explorer + Flash Player 9 fix inspired by SWFObject.
+requires: Element.Event
 
-requires: [Options, $util]
-
-provides: Swiff
+provides: DomReady
 
 ...
 */
 
-var Swiff = new Class({
+Element.Events.domready = {
 
-	Implements: [Options],
+	onAdd: function(fn){
+		if (Browser.loaded) fn.call(this);
+	}
 
-	options: {
-		id: null,
-		height: 1,
-		width: 1,
-		container: null,
-		properties: {},
-		params: {
-			quality: 'high',
-			allowScriptAccess: 'always',
-			wMode: 'transparent',
-			swLiveConnect: true
-		},
-		callBacks: {},
-		vars: {}
+};
+
+(function(){
+
+	var domready = function(){
+		if (Browser.loaded) return;
+		Browser.loaded = true;
+		window.fireEvent('domready');
+		document.fireEvent('domready');
+	};
+	
+	window.addEvent('load', domready);
+
+	if (Browser.Engine.trident){
+		var temp = document.createElement('div');
+		(function(){
+			($try(function(){
+				temp.doScroll(); // Technique by Diego Perini
+				return document.id(temp).inject(document.body).set('html', 'temp').dispose();
+			})) ? domready() : arguments.callee.delay(50);
+		})();
+	} else if (Browser.Engine.webkit && Browser.Engine.version < 525){
+		(function(){
+			(['loaded', 'complete'].contains(document.readyState)) ? domready() : arguments.callee.delay(50);
+		})();
+	} else {
+		document.addEvent('DOMContentLoaded', domready);
+	}
+
+})();
+
+
+/*
+---
+
+name: JSON
+
+description: JSON encoder and decoder.
+
+license: MIT-style license.
+
+see: <http://www.json.org/>
+
+requires: [Array, String, Number, Function, Hash]
+
+provides: JSON
+
+...
+*/
+
+var JSON = new Hash(this.JSON && {
+	stringify: JSON.stringify,
+	parse: JSON.parse
+}).extend({
+	
+	$specialChars: {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'},
+
+	$replaceChars: function(chr){
+		return JSON.$specialChars[chr] || '\\u00' + Math.floor(chr.charCodeAt() / 16).toString(16) + (chr.charCodeAt() % 16).toString(16);
 	},
 
-	toElement: function(){
-		return this.object;
-	},
-
-	initialize: function(path, options){
-		this.instance = 'Swiff_' + $time();
-
-		this.setOptions(options);
-		options = this.options;
-		var id = this.id = options.id || this.instance;
-		var container = document.id(options.container);
-
-		Swiff.CallBacks[this.instance] = {};
-
-		var params = options.params, vars = options.vars, callBacks = options.callBacks;
-		var properties = $extend({height: options.height, width: options.width}, options.properties);
-
-		var self = this;
-
-		for (var callBack in callBacks){
-			Swiff.CallBacks[this.instance][callBack] = (function(option){
-				return function(){
-					return option.apply(self.object, arguments);
-				};
-			})(callBacks[callBack]);
-			vars[callBack] = 'Swiff.CallBacks.' + this.instance + '.' + callBack;
+	encode: function(obj){
+		switch ($type(obj)){
+			case 'string':
+				return '"' + obj.replace(/[\x00-\x1f\\"]/g, JSON.$replaceChars) + '"';
+			case 'array':
+				return '[' + String(obj.map(JSON.encode).clean()) + ']';
+			case 'object': case 'hash':
+				var string = [];
+				Hash.each(obj, function(value, key){
+					var json = JSON.encode(value);
+					if (json) string.push(JSON.encode(key) + ':' + json);
+				});
+				return '{' + string + '}';
+			case 'number': case 'boolean': return String(obj);
+			case false: return 'null';
 		}
-
-		params.flashVars = Hash.toQueryString(vars);
-		if (Browser.Engine.trident){
-			properties.classid = 'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000';
-			params.movie = path;
-		} else {
-			properties.type = 'application/x-shockwave-flash';
-			properties.data = path;
-		}
-		var build = '<object id="' + id + '"';
-		for (var property in properties) build += ' ' + property + '="' + properties[property] + '"';
-		build += '>';
-		for (var param in params){
-			if (params[param]) build += '<param name="' + param + '" value="' + params[param] + '" />';
-		}
-		build += '</object>';
-		this.object = ((container) ? container.empty() : new Element('div')).set('html', build).firstChild;
+		return null;
 	},
 
-	replaces: function(element){
-		element = document.id(element, true);
-		element.parentNode.replaceChild(this.toElement(), element);
-		return this;
-	},
-
-	inject: function(element){
-		document.id(element, true).appendChild(this.toElement());
-		return this;
-	},
-
-	remote: function(){
-		return Swiff.remote.apply(Swiff, [this.toElement()].extend(arguments));
+	decode: function(string, secure){
+		if ($type(string) != 'string' || !string.length) return null;
+		if (secure && !(/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(string.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, ''))) return null;
+		return eval('(' + string + ')');
 	}
 
 });
-
-Swiff.CallBacks = {};
-
-Swiff.remote = function(obj, fn){
-	var rs = obj.CallFunction('<invoke name="' + fn + '" returntype="javascript">' + __flash__argumentsToXML(arguments, 2) + '</invoke>');
-	return eval(rs);
-};
-
