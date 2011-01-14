@@ -94,8 +94,9 @@ aside a.selector.current {
 }
 
 aside li a.delete {
-    display: none;
+    display: block;
     position: absolute;
+    visibility: hidden;
     top: 50%; right: 8px; bottom: auto; left: auto;
     margin: 0; margin-top: -7px;
     width: 14px;
@@ -106,7 +107,7 @@ aside li a.delete {
 }
 
 aside li:hover a.delete {
-    display: block;
+    visibility: visible;
 }
 
 aside li a.delete:hover {
