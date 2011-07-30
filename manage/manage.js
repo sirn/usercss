@@ -142,6 +142,10 @@ var Manager = {
         form.styles.set('text', data.styles);
         form.enabled.set('checked', data.enabled);
         
+        form.domains.value = data.domains.join('\n');
+        form.excludes.value = data.excludes.join('\n');
+        form.styles.value = data.styles === undefined ? null : data.styles;
+        
         form.fireEvent('keyup');
         
         /* Display */

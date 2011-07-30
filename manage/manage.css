@@ -101,7 +101,7 @@ aside li a.delete {
     margin: 0; margin-top: -7px;
     width: 14px;
     height: 14px;
-    background-image: url(safari-resource:/ExtensionClose.png);
+    background-image: url(resource/ExtensionClose.png);
     background-repeat: no-repeat;
     text-indent: -10000em;
 }
@@ -111,7 +111,7 @@ aside li:hover a.delete {
 }
 
 aside li a.delete:hover {
-    background-image: url(safari-resource:/ExtensionCloseHovered.png);
+    background-image: url(resource/ExtensionCloseHovered.png);
 }
 
 aside a#new {

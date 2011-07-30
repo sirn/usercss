@@ -4,6 +4,8 @@
 <dict>
 	<key>Author</key>
 	<string>Kridsada Thanabulpong</string>
+	<key>Builder Version</key>
+	<string>7534.48.3</string>
 	<key>CFBundleDisplayName</key>
 	<string>User CSS</string>
 	<key>CFBundleIdentifier</key>
