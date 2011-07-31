@@ -55,7 +55,7 @@ function handleMessage(event) {
         event.target.page.dispatchMessage('getItem', [event.message, item]);
         break;
     case 'removeItem':
-        stylestorage.removeItem(event.message);
+        styleStorage.removeItem(event.message);
         break;
     case 'setItem':
         styleStorage.setItem(event.message[0], event.message[1]);
@@ -67,6 +67,11 @@ function handleMessage(event) {
         });
         event.target.page.dispatchMessage('items', items);
         break;
+    case 'shouldConvert':
+        if (localStorage.length === 0) {
+            event.target.page.dispatchMessage('shouldConvert', true);
+            break;
+        }
     default:
         break;
     }

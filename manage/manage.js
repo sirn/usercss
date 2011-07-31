@@ -17,11 +17,17 @@ var Manager = {
         safari.self.tab.dispatchMessage('setItem', [key, values]);
     },
 
+    // Convert to 'global' storage.
+    makeGlobal: function(){
+        safari.self.tab.dispatchMessage('shouldConvert');
+    },
+
     // Manager application
     start: function(){
         const newLink = $('new'),
               domainLabels = $$('span.label'),
               form = $('form');
+        Manager.makeGlobal();
         Manager.createItems();
 
         /* Events for the "New User CSS" sidebar link. */
@@ -230,6 +236,16 @@ function handleMessage(event) {
         break;
     case 'getItem':
         Manager.bindEditForm(event.message[0], event.message[1]);
+        break;
+    case 'shouldConvert':
+        if (!localStorage.getItem('converterWasRun')) {
+            styleStorage.each(function(key, data){
+                Manager.setItem(key, data);
+            });
+            localStorage.setItem('converterWasRun', 1);
+            Manager.reloadStyles();
+            document.location = document.location;
+        }
         break;
     }
 }
