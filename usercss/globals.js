@@ -52,7 +52,7 @@ function handleMessage(event) {
         break;
     case 'getItem':
         var item = styleStorage.getItem(event.message);
-        event.target.page.dispatchMessage('getItem', item);
+        event.target.page.dispatchMessage('getItem', [event.message, item]);
         break;
     case 'removeItem':
         stylestorage.removeItem(event.message);

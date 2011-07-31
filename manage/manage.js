@@ -10,7 +10,7 @@ var Manager = {
     },
 
     getItem: function(key){
-        safari.self.tab.canLoad('getItem', key);
+        safari.self.tab.dispatchMessage('getItem', key);
     },
 
     setItem: function(key, values){
@@ -97,7 +97,7 @@ var Manager = {
                     click: function(event){
                         var key = this.hash.substr(1);
                         Manager.markCurrent(this);
-                        Manager.bindEditForm(key);
+                        Manager.getItem(key);
                     }
                 }
             }),
@@ -184,8 +184,7 @@ var Manager = {
         }
     },
 
-    bindEditForm: function(key){
-        var data = Manager.getItem(key);
+    bindEditForm: function(key, data){
         Manager.setTitle(data.name);
         Manager.bindForm(data, function(formData){
             Manager.setItem(key, formData);
@@ -228,6 +227,9 @@ function handleMessage(event) {
         event.message.each(function(item){
             Manager.createItem(item.key, item.data);
         });
+        break;
+    case 'getItem':
+        Manager.bindEditForm(event.message[0], event.message[1]);
         break;
     }
 }
