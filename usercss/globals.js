@@ -50,6 +50,23 @@ function handleMessage(event) {
     case 'reloadStyles':
         reloadStyles();
         break;
+    case 'getItem':
+        var item = styleStorage.getItem(event.message);
+        event.target.page.dispatchMessage('getItem', item);
+        break;
+    case 'removeItem':
+        stylestorage.removeItem(event.message);
+        break;
+    case 'setItem':
+        styleStorage.setItem(event.message[0], event.message[1]);
+        break;
+    case 'items':
+        var items = [];
+        styleStorage.each(function(key, data){
+            items.push({'key': key, 'data': data});
+        });
+        event.target.page.dispatchMessage('items', items);
+        break;
     default:
         break;
     }
